@@ -6,7 +6,7 @@ edition = "2018"
 license="MIT"
 description="aplm bindings and wrapper for rust"
 keywords = ["pacman", "libalpm", "alpm", "arch", "linux"]
-repository="https://github.com/BahNahNah/alpm-rust"
+repository="https://github.com/BahNahNah/rust-arch/tree/master/alpm-rs"
 documentation="https://docs.rs/alpm-rs"
 
 [dependencies]

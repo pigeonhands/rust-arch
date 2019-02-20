@@ -6,6 +6,7 @@ edition = "2018"
 license="MIT"
 keywords = ["aur", "arch"]
 description="aur api rust client"
+repository="https://github.com/BahNahNah/rust-arch/tree/master/aur-client"
 
 [dependencies]
 reqwest = "0.9.10"
