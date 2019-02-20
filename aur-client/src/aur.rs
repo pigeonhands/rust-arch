@@ -14,7 +14,7 @@ lazy_static!{
     static ref AUR_GIT_URL: Url = Url::parse(AUR_URL).unwrap();
 }
 
-
+#[allow(non_snake_case)]
 #[derive(Deserialize)]
 pub struct Package{
     pub ID : i32,
@@ -42,6 +42,7 @@ pub struct Package{
     pub License : Option<Vec<String>>,
     pub Keywords : Option<Vec<String>>,
 }
+
 
 #[derive(Deserialize)]
 pub struct Response {
