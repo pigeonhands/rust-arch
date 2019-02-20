@@ -3,6 +3,11 @@ rust:
   - stable
   - beta
   - nightly
+
+
+before_install:
+  - curl -O https://github.com/devkitPro/pacman/blob/master/lib/libalpm/alpm.h
+    
 matrix:
   allow_failures:
     - rust: nightly
