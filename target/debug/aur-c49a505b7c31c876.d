@@ -1,0 +1,1 @@
+/home/sam/dev/rust/rust-arch/target/debug/aur-c49a505b7c31c876: /home/sam/dev/rust/rust-arch/aur-client/src/aur.rs /home/sam/dev/rust/rust-arch/aur-client/src/lib.rs /home/sam/dev/rust/rust-arch/aur-client/src/pkgbuild/mod.rs /home/sam/dev/rust/rust-arch/aur-client/src/pkgbuild/parse.rs /home/sam/dev/rust/rust-arch/aur-client/tests/aur.rs

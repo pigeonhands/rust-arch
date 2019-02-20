@@ -1,0 +1,4 @@
+cargo:rerun-if-env-changed=LIBZ_SYS_STATIC
+cargo:rerun-if-changed=build.rs
+cargo:rustc-link-search=native=/usr/lib
+cargo:rustc-link-lib=z

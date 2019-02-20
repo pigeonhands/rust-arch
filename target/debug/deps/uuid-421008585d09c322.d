@@ -1,0 +1,15 @@
+/home/sam/dev/rust/rust-arch/target/debug/deps/libuuid-421008585d09c322.rlib: /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/lib.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/adapter/mod.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/adapter/core_support/mod.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/builder.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/parser/mod.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/parser/core_support.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/parser/std_support.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/prelude.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/core_support.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/std_support.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/v4.rs
+
+/home/sam/dev/rust/rust-arch/target/debug/deps/uuid-421008585d09c322.d: /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/lib.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/adapter/mod.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/adapter/core_support/mod.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/builder.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/parser/mod.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/parser/core_support.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/parser/std_support.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/prelude.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/core_support.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/std_support.rs /home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/v4.rs
+
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/lib.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/adapter/mod.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/adapter/core_support/mod.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/builder.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/parser/mod.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/parser/core_support.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/parser/std_support.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/prelude.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/core_support.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/std_support.rs:
+/home/sam/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.7.2/src/v4.rs:

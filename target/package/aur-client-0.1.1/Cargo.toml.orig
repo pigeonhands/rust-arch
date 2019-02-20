@@ -1,0 +1,15 @@
+[package]
+name = "aur-client"
+version = "0.1.1"
+authors = ["Sam <sam.mackenzie@live.com>"]
+edition = "2018"
+license="MIT"
+keywords = ["aur", "arch"]
+description="aur api rust client"
+repository="https://github.com/BahNahNah/rust-arch/tree/master/aur-client"
+
+[dependencies]
+reqwest = "0.9.10"
+git2 = "0.8"
+serde = { version = "1.0.88", features = ["derive"] }
+lazy_static = "1.2.0"
