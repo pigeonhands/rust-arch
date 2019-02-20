@@ -1,1 +1,0 @@
-/home/sam/dev/rust/rust-arch/target/debug/pkgbuild-41f5ff1d883136e0: /home/sam/dev/rust/rust-arch/aur-client/src/aur.rs /home/sam/dev/rust/rust-arch/aur-client/src/lib.rs /home/sam/dev/rust/rust-arch/aur-client/src/pkgbuild/mod.rs /home/sam/dev/rust/rust-arch/aur-client/src/pkgbuild/parse.rs /home/sam/dev/rust/rust-arch/aur-client/tests/pkgbuild.rs
