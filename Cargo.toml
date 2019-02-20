@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "alpm-rs",
+    "aur-client"
+]
