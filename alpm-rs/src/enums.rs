@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 
 const ALPM_PKG_VALIDATION_UNKNOWN: i32  = 0;
 const ALPM_PKG_VALIDATION_NONE : i32 =  (1 << 0);
@@ -5,6 +6,8 @@ const ALPM_PKG_VALIDATION_MD5SUM :  i32 = (1 << 1);
 const ALPM_PKG_VALIDATION_SHA256SUM : i32 = (1 << 2);
 const ALPM_PKG_VALIDATION_SIGNATURE : i32 = (1 << 3);
 
+#[allow(non_camel_case_types)]
+#[repr(C)]
 pub enum PkgFrom {
 	_invalid,
 	ALPM_PKG_FROM_FILE,

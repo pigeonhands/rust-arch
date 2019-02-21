@@ -1,10 +1,9 @@
 extern crate libc;
 
-use std::ffi::{CStr,CString};
+use std::ffi::{CStr};
 use std::os::raw::{c_char,c_void};
 use std::ptr;
 
-use crate::{Handle, alpm_handle_t};
 use crate::package::{PackageList};
 use crate::types::{alpm_list_t, AlpmList, AmplListItem};
 
@@ -28,26 +27,37 @@ pub struct AlpmDB {
     pub (crate) db: *mut alpm_db_t,
 }
 
+
+impl From<*mut alpm_db_t> for AlpmDB {
+    fn from(db :  *mut alpm_db_t) -> AlpmDB{
+        AlpmDB{
+            db: db,
+        }
+    }
+}
+
 impl AlpmDB{
 
     /// Get the name of the package database.
     pub fn name(&self) -> &str {
-        cstr!(
-            alpm_db_get_name(self.db)
-        )
+        unsafe{
+            cstr!(alpm_db_get_name(self.db))
+        }
+        
     }
 
     /// Get the package cache of the package database.
     pub fn pkgcache(&self) -> PackageList {
-        let pl = callc!(alpm_db_get_pkgcache(self.db));
-        PackageList::new(pl)
+        unsafe{
+            alpm_db_get_pkgcache(self.db).into()
+        }
     }
 
     /// Unregister the package database.
     pub fn unregister(&self) -> bool{
-        to_bool!(
-            callc!(alpm_db_unregister(self.db))
-        )
+        unsafe{
+            to_bool!(alpm_db_unregister(self.db))
+        }
     }
 }
 

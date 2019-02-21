@@ -14,6 +14,12 @@ pub (crate) struct alpm_list_t  {
 	next: *mut alpm_list_t,
 }
 
+impl<T: AmplListItem<T>> From<*mut alpm_list_t> for AlpmList<T> {
+    fn from(c_list: *mut alpm_list_t) -> AlpmList<T> {
+        AlpmList::new(c_list)
+    }
+}
+
 /// Trait to pass each item into a custom struct's constructor.
 /// Workaround to avoid copying data and loosing the alpm_list_t data pointer 
 pub trait AmplListItem<T>{

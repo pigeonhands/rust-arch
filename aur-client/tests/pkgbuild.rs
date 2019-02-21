@@ -1,11 +1,11 @@
-//use aur_client::pkgbuild::Pkgbuild;
+use aur_client::pkgbuild::tokenize::TokenList;
 use std::path::Path;
 
 
 
 #[test]
 fn pkgbuild_parse(){
-    //let f = Pkgbuild::from_str(test_file()).unwrap();
+    let f = TokenList::from_str(test_file());
 }
 
 
