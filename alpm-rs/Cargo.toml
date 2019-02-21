@@ -1,6 +1,6 @@
 [package]
 name = "alpm-rs"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Sam <sam.mackenzie@live.com>"]
 edition = "2018"
 license="MIT"
@@ -8,6 +8,7 @@ description="aplm bindings and wrapper for rust"
 keywords = ["pacman", "libalpm", "alpm", "arch", "linux"]
 repository="https://github.com/BahNahNah/rust-arch/tree/master/alpm-rs"
 documentation="https://docs.rs/alpm-rs"
+readme="README.md"
 
 [dependencies]
 libc = "0.2.48"
