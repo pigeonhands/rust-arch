@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Sam <sam.mackenzie@live.com>"]
 edition = "2018"
 description="Library for interacting with pacman package manager on linux"
-licence="MIT"
+license="MIT"
 
 [dependencies]
 rust-ini = "0.13.0"

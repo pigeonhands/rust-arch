@@ -34,8 +34,8 @@ pub struct Repository {
     usage: Vec<String>,
 }
 
-#[allow(unconditional_recursion)]
 impl Default for Repository{
+    #[allow(unconditional_recursion)]
     fn default() -> Self{
         Repository{
             ..Default::default()
@@ -43,8 +43,8 @@ impl Default for Repository{
     }
 }
 
-#[allow(unconditional_recursion)]
 impl Default for PacmanConfig{
+    #[allow(unconditional_recursion)]
     fn default() -> Self{
         PacmanConfig{
             ..Default::default()
