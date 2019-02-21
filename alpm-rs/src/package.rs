@@ -4,6 +4,7 @@ use std::ptr;
 
 use crate::enums::PkgFrom;
 use crate::types::{alpm_list_t, AlpmList,AmplListItem};
+use crate::db::{alpm_db_t, AlpmDB};
 
 #[link(name="alpm")]
 extern {
@@ -24,6 +25,7 @@ extern {
     fn alpm_pkg_compute_requiredby(pkg: *mut alpm_pkg_t)-> *mut alpm_list_t;
     fn alpm_pkg_compute_optionalfor(pkg: *mut alpm_pkg_t)-> *mut alpm_list_t;
     fn alpm_pkg_get_validation(pkg: *mut alpm_pkg_t) -> i32;
+    fn alpm_pkg_get_db(pkg: *mut alpm_pkg_t) -> *mut alpm_db_t;
 }
 
 pub type PackageList = AlpmList<Package>;
@@ -146,6 +148,13 @@ impl Package{
     pub fn description(&self) -> &str {
         unsafe{
             cstr!(alpm_pkg_get_desc(self.pkg)) 
+        }
+    }
+
+    // Returns the source database
+    pub fn db(&self) -> AlpmDB{
+        unsafe{
+            alpm_pkg_get_db(self.pkg).into()
         }
     }
 

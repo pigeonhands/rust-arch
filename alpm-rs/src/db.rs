@@ -21,6 +21,15 @@ pub (crate) struct alpm_db_t{
     __unused: [u8;0],//get rid of warnings
 
 }
+pub type DBList = AlpmList<AlpmDB>;
+
+impl AmplListItem<AlpmDB> for AlpmDB{
+    fn new(data_ptr: *mut c_void) -> AlpmDB{
+        AlpmDB{
+            db: data_ptr as *mut alpm_db_t,
+        }
+    }
+}
 
 /// Alpm database
 pub struct AlpmDB {
@@ -66,12 +75,3 @@ impl Drop for AlpmDB {
     }
 }
 
-pub type DBList = AlpmList<AlpmDB>;
-
-impl AmplListItem<AlpmDB> for AlpmDB{
-    fn new(data_ptr: *mut c_void) -> AlpmDB{
-        AlpmDB{
-            db: data_ptr as *mut alpm_db_t,
-        }
-    }
-}
