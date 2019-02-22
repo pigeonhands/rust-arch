@@ -33,6 +33,12 @@ pub struct AlpmList<T> {
     phantom: PhantomData<T>,
 }
 
+pub struct AlpmListIterator<T> {
+    item: *mut alpm_list_t,
+    phantom: PhantomData<T>,
+}
+
+
 impl<T: AmplListItem<T>> AlpmList<T> {
     pub (crate) fn new(c_list: *mut alpm_list_t) -> AlpmList<T> {
         AlpmList {
@@ -41,7 +47,34 @@ impl<T: AmplListItem<T>> AlpmList<T> {
             phantom:PhantomData,
         }
     }
+
+    pub fn iter (&self) -> AlpmListIterator<T> {
+        AlpmListIterator {
+            item: self.list,
+            phantom: PhantomData,
+        }
+    }
 }
+
+
+ impl<T: AmplListItem<T>> std::iter::Iterator for AlpmListIterator<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<T> {
+        if self.item == ptr::null_mut(){
+            return None;
+        }
+        unsafe{
+            if (*self.item).next != ptr::null_mut() {
+                self.item = (*self.item).next;
+                Some(T::new((*self.item).data ))
+            } else {
+                None
+            }
+        }
+    }
+ }
+
 
 impl<T> Drop for AlpmList<T> {
     fn drop(&mut self) {
@@ -68,3 +101,4 @@ impl<T> Drop for AlpmList<T> {
         }
     }
  }
+
