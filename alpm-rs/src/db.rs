@@ -13,6 +13,8 @@ extern {
     fn alpm_db_get_pkgcache(db: *mut alpm_db_t)-> *mut alpm_list_t;
     fn alpm_db_unregister(db: *mut alpm_db_t) -> i32;
     fn alpm_db_get_name(db: *mut alpm_db_t) -> *const c_char;
+
+    //fn  alpm_db_search(alpm_db_t *db, const alpm_list_t *needles) *mut alpm_list_t;
 }
 
 

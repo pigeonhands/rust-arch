@@ -1,18 +1,24 @@
 /// string to c-string
 macro_rules! strc {
     ($e:expr) => {
-        CString::new($e).unwrap().as_ptr()
+        std::ffi::CString::new($e).unwrap().as_ptr()
     };
 }
 
 /// c-string to string
 macro_rules! cstr {
     ($e:expr) => {
-        if $e == ptr::null_mut() {
+        if $e == std::ptr::null_mut() {
                 ""
             }else{
-                CStr::from_ptr($e).to_str().unwrap_or("")
+                std::ffi::CStr::from_ptr($e).to_str().unwrap_or("")
             }
+    };
+}
+
+macro_rules! ptr {
+    ($e:expr, $t:ty) => {
+        (&mut $e as *mut $t)
     };
 }
 

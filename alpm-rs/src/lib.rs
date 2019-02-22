@@ -2,7 +2,7 @@
 #[macro_use]
 pub mod macros;
 
-
+pub mod clib;
 pub mod error;
 pub mod enums;
 pub mod db;
@@ -35,8 +35,11 @@ extern {
     
     fn alpm_register_syncdb(handle : *mut alpm_handle_t, treename : *const c_char, level: i32 ) -> *mut alpm_db_t;
 
+    fn alpm_option_set_logcb(handle : *mut alpm_handle_t, f: extern fn(i32, *const c_char, va_list::VaList)) -> i32;
+
 }
 
+type LogCallback = fn(i32);
 
 #[repr(C)]
 struct alpm_handle_t{
@@ -76,13 +79,27 @@ pub fn initialize(root: &str, dbpath: &str) -> Result<Handle, Box<dyn Error>> {
     if err as i32 != 0{
         Err(error::AlpmError::new(err).into())
     }else{
-        Ok(Handle{
-            alpm_handle: handle,
-        })
+        Ok(Handle::new(handle))
     }
 }
 
 impl Handle{
+
+    fn new(handle:  *mut alpm_handle_t) -> Self{
+        let h = Handle{
+            alpm_handle: handle,
+        };
+        h.setup_callbacks();
+        h
+    }
+
+    fn setup_callbacks(&self){
+
+    }
+
+    fn log_callback(level: i32, fmt: *const c_char, args: va_list::VaList){
+        
+    }
 
     /// Get the database of locally installed packages.
     pub fn local_db(&self) -> AlpmDB{
