@@ -94,7 +94,7 @@ impl PacmanConfig{
                         for v in l_v.iter() {
                             match k.as_str() {
                                 "RootDir"=> cfg.root_dir= v.to_string(),
-                                "DbPath"=> cfg.db_path= v.to_string(),
+                                "DBPath"=> cfg.db_path= v.to_string(),
                                 "CasheDir"=> cfg.cashe_dir.push(v.to_string()),
                                 "HookDir"=> cfg.hook_dir.push(v.to_string()),
                                 "LogFile"=> cfg.log_file= v.to_string(),
