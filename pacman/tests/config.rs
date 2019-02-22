@@ -1,7 +1,13 @@
 use pacman::config::PacmanConfig;
 
 #[test]
-fn pacman_cfg(){
+fn pacman_conf() {
+    let cfg = pacman::pacman_conf::get_config();
+    assert_ne!(cfg.root_dir, "");
+}
+
+#[test]
+fn pacman_cfg_parse(){
     let raw_cfg = r#"
 [options]
 Color
