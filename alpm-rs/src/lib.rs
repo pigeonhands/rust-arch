@@ -98,12 +98,7 @@ impl Handle{
     /// Get the list of sync databases.
     pub fn sync_dbs(&self) -> DBList{
         unsafe{
-            let lst = alpm_get_syncdbs(self.alpm_handle);
-            let dblst : DBList = lst.into();
-            println!("alpm syncdbs: {}", lst as usize);
-            println!("data: {}", (*lst).data as usize);
-            println!("mxt: {}", (*lst).next as usize);
-            dblst
+            alpm_get_syncdbs(self.alpm_handle).into()
         }
     }
 
