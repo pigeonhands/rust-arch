@@ -9,9 +9,9 @@ extern {
 
 #[repr(C)]
 pub (crate) struct alpm_list_t  {
-	data : *mut c_void,
-	prev: *mut alpm_list_t,
-	next: *mut alpm_list_t,
+	pub (crate) data : *mut c_void,
+	pub (crate) prev: *mut alpm_list_t,
+	pub (crate) next: *mut alpm_list_t,
 }
 
 impl<T: AmplListItem<T>> From<*mut alpm_list_t> for AlpmList<T> {
@@ -61,17 +61,26 @@ impl<T: AmplListItem<T>> AlpmList<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
+        /*
         if self.item == ptr::null_mut(){
             return None;
         }
-        unsafe{
+        
             if (*self.item).next != ptr::null_mut() {
                 self.item = (*self.item).next;
                 Some(T::new((*self.item).data ))
             } else {
                 None
+            }*/
+        unsafe{
+            if self.item == ptr::null_mut() {
+                return None;
             }
+            let data =  T::new((*self.item).data);
+            self.item = (*self.item).next;
+            Some(data)
         }
+
     }
  }
 
@@ -88,16 +97,18 @@ impl<T> Drop for AlpmList<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        if self.current == ptr::null_mut(){
-            return None;
-        }
         unsafe{
-            if (*self.current).next != ptr::null_mut() {
-                self.current = (*self.current).next;
-                Some(T::new((*self.current).data ))
-            } else {
-                None
+            if self.current == ptr::null_mut() {
+                return None;
             }
+        
+            let data =  T::new((*self.current).data);
+            self.current = (*self.current).next;
+            //if (*self.current).next != ptr::null_mut() {
+                
+            //} 
+           // println!("Got data {}", (*self.current).data as usize);
+            Some(data)
         }
     }
  }

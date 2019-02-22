@@ -1,26 +1,28 @@
 
 
 
-
-use std::error::Error;
-use std::ffi::CString;
 use std::os::raw::c_char;
 
 #[link(name="alpm")]
 extern {
-    fn vsnprintf(n: *mut [c_char], fmt: *const c_char, args: va_list::VaList) -> i32;
+    fn vsnprintf(s: *mut c_char, num: usize,fmt: *mut i32, args: va_list::VaList) -> i32;
 }
-/*
-fn vsn_printf(n: *mut c_char, fmt: &mut c_char, mut args: va_list::VaList) -> String{
-    let  mut sized buf : [u8];
 
+pub unsafe fn vsn_printf(fmt: *mut c_char, args: va_list::VaList) -> String{
 
-    let len = vsnprintf(ptr!(buf, c_char), ptr!(fmt, c_char), args);
+    let mut buf = vec![0;300];
+    println!("0] {}", cstr!(fmt));
 
-    if len > buf.capacity(){
-        buf = [c_char;len];
-        vsnprintf(ptr!(buf, c_char), ptr!(fmt, c_char), args);
+    let mut testBuff = [0;666];
+
+    let len = vsnprintf(fmt, 0, testBuff.as_mut_ptr(), args) as usize;
+    println!("1] {}", len);
+    if len > buf.len(){
+        buf = vec![0;len + 1].into();
+      //  vsnprintf(fmt, buf.len(), ptr!(buf.as_mut_ptr(),c_char), args);
     }
+        println!("2] {}", len);
 
-    cstr!(buf)
-}*/
+
+    cstr!(buf.as_mut_ptr() as *mut c_char).to_string()
+}

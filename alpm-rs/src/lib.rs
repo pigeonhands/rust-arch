@@ -1,18 +1,17 @@
 
 #[macro_use]
 pub mod macros;
-
 pub mod clib;
 pub mod error;
 pub mod enums;
 pub mod db;
 pub mod package;
 pub mod types;
+pub mod callbacks;
 
 extern crate libc;
 
 use std::error::Error;
-use std::ffi::CString;
 use std::os::raw::c_char;
 
 use crate::package::{Package,alpm_pkg_t};
@@ -35,11 +34,8 @@ extern {
     
     fn alpm_register_syncdb(handle : *mut alpm_handle_t, treename : *const c_char, level: i32 ) -> *mut alpm_db_t;
 
-    fn alpm_option_set_logcb(handle : *mut alpm_handle_t, f: extern fn(i32, *const c_char, va_list::VaList)) -> i32;
-
 }
 
-type LogCallback = fn(i32);
 
 #[repr(C)]
 struct alpm_handle_t{
@@ -86,19 +82,9 @@ pub fn initialize(root: &str, dbpath: &str) -> Result<Handle, Box<dyn Error>> {
 impl Handle{
 
     fn new(handle:  *mut alpm_handle_t) -> Self{
-        let h = Handle{
+        Handle{ 
             alpm_handle: handle,
-        };
-        h.setup_callbacks();
-        h
-    }
-
-    fn setup_callbacks(&self){
-
-    }
-
-    fn log_callback(level: i32, fmt: *const c_char, args: va_list::VaList){
-        
+        }
     }
 
     /// Get the database of locally installed packages.
@@ -112,7 +98,12 @@ impl Handle{
     /// Get the list of sync databases.
     pub fn sync_dbs(&self) -> DBList{
         unsafe{
-            alpm_get_syncdbs(self.alpm_handle).into()
+            let lst = alpm_get_syncdbs(self.alpm_handle);
+            let dblst : DBList = lst.into();
+            println!("alpm syncdbs: {}", lst as usize);
+            println!("data: {}", (*lst).data as usize);
+            println!("mxt: {}", (*lst).next as usize);
+            dblst
         }
     }
 

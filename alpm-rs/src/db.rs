@@ -1,8 +1,6 @@
 extern crate libc;
 
-use std::ffi::{CStr};
 use std::os::raw::{c_char,c_void};
-use std::ptr;
 
 use crate::package::{PackageList};
 use crate::types::{alpm_list_t, AlpmList, AmplListItem};

@@ -18,7 +18,7 @@ macro_rules! cstr {
 
 macro_rules! ptr {
     ($e:expr, $t:ty) => {
-        (&mut $e as *mut $t)
+        $e as *mut $t
     };
 }
 
