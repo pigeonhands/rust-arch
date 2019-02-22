@@ -3,7 +3,7 @@ extern crate libc;
 use std::os::raw::{c_char,c_void};
 
 use crate::package::{PackageList};
-use crate::types::{alpm_list_t, AlpmList, AmplListItem};
+use crate::types::{alpm_list_t, AlpmListType, AlpmList, AlpmListItem, StringList };
 
 
 #[link(name="alpm")]
@@ -11,10 +11,8 @@ extern {
     fn alpm_db_get_pkgcache(db: *mut alpm_db_t)-> *mut alpm_list_t;
     fn alpm_db_unregister(db: *mut alpm_db_t) -> i32;
     fn alpm_db_get_name(db: *mut alpm_db_t) -> *const c_char;
-
-    //fn  alpm_db_search(alpm_db_t *db, const alpm_list_t *needles) *mut alpm_list_t;
+    fn alpm_db_search(db: *mut alpm_db_t, needles: *mut alpm_list_t) -> *mut alpm_list_t;
 }
-
 
 #[repr(C)]
 pub (crate) struct alpm_db_t{
@@ -23,11 +21,15 @@ pub (crate) struct alpm_db_t{
 }
 pub type DBList = AlpmList<AlpmDB>;
 
-impl AmplListItem<AlpmDB> for AlpmDB{
+impl AlpmListItem<AlpmDB> for AlpmDB{
     fn new(data_ptr: *mut c_void) -> AlpmDB{
         AlpmDB{
             db: data_ptr as *mut alpm_db_t,
         }
+    }
+
+    fn to_ptr(&self) -> *mut c_void {
+        self.db as *mut c_void
     }
 }
 
@@ -51,8 +53,24 @@ impl AlpmDB{
     pub fn name(&self) -> &str {
         unsafe{
             cstr!(alpm_db_get_name(self.db))
+        }   
+    }
+
+    pub fn search<'a, T, S>(&self, needles: T) -> PackageList 
+    where
+        T: IntoIterator<Item=S>,
+        S: AsRef<str> + 'a{
+        unsafe{
+            let mut needle_list = StringList::empty();
+            for n in needles{
+                needle_list.add(n.into());
+            }
+            alpm_db_search(self.db, needle_list.to_ptr()).into()
         }
-        
+    }
+
+    pub fn search_one<'a, S: AsRef<str> + 'a>(&self, search: S) -> PackageList {
+        self.search(&[search])
     }
 
     /// Get the package cache of the package database.

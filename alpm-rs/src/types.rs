@@ -1,29 +1,34 @@
-use std::os::raw::{c_void};
+use std::os::raw::{c_void, c_char};
 use std::ptr;
 use std::marker::PhantomData;
 
 #[link(name="alpm")]
 extern {
     fn alpm_list_free(list: *mut alpm_list_t);
+    fn alpm_list_add(list: *mut alpm_list_t, data: *mut c_void) -> *mut alpm_list_t;
 }
 
+
 #[repr(C)]
-pub (crate) struct alpm_list_t  {
+pub struct alpm_list_t  {
 	pub (crate) data : *mut c_void,
 	pub (crate) prev: *mut alpm_list_t,
 	pub (crate) next: *mut alpm_list_t,
 }
 
-impl<T: AmplListItem<T>> From<*mut alpm_list_t> for AlpmList<T> {
-    fn from(c_list: *mut alpm_list_t) -> AlpmList<T> {
-        AlpmList::new(c_list)
-    }
+pub trait AlpmListType<T: AlpmListItem<T>> {
+    fn new(c_list: *mut alpm_list_t) -> Self;
+    fn empty() -> Self;
+    fn add(&mut self, item : T);
+    fn to_ptr(&self) -> *mut alpm_list_t;
+    fn iter (&self) -> AlpmListIterator<T>;
 }
 
 /// Trait to pass each item into a custom struct's constructor.
 /// Workaround to avoid copying data and loosing the alpm_list_t data pointer 
-pub trait AmplListItem<T>{
+pub trait AlpmListItem<T>{
     fn new(data_ptr: *mut c_void) -> Self;
+    fn to_ptr(&self) -> *mut c_void;
 }
 
 /// Generic almp list
@@ -33,14 +38,9 @@ pub struct AlpmList<T> {
     phantom: PhantomData<T>,
 }
 
-pub struct AlpmListIterator<T> {
-    item: *mut alpm_list_t,
-    phantom: PhantomData<T>,
-}
 
-
-impl<T: AmplListItem<T>> AlpmList<T> {
-    pub (crate) fn new(c_list: *mut alpm_list_t) -> AlpmList<T> {
+impl<T: AlpmListItem<T>> AlpmListType<T> for AlpmList<T> {
+    fn new(c_list: *mut alpm_list_t) -> AlpmList<T> {
         AlpmList {
             list: c_list,
             current: c_list,
@@ -48,7 +48,25 @@ impl<T: AmplListItem<T>> AlpmList<T> {
         }
     }
 
-    pub fn iter (&self) -> AlpmListIterator<T> {
+    fn empty() -> AlpmList<T>{
+        AlpmList {
+            list: std::ptr::null_mut(),
+            current: std::ptr::null_mut(),
+            phantom:PhantomData,
+        }
+    }
+
+    fn add(&mut self, item : T) {
+        unsafe{
+            self.list = alpm_list_add(self.list, item.to_ptr());
+        }
+    }
+    
+    fn to_ptr(&self) -> *mut alpm_list_t {
+        self.list
+    }
+
+    fn iter (&self) -> AlpmListIterator<T> {
         AlpmListIterator {
             item: self.list,
             phantom: PhantomData,
@@ -57,7 +75,19 @@ impl<T: AmplListItem<T>> AlpmList<T> {
 }
 
 
- impl<T: AmplListItem<T>> std::iter::Iterator for AlpmListIterator<T> {
+impl<T: AlpmListItem<T>> From<*mut alpm_list_t> for AlpmList<T> {
+    fn from(c_list: *mut alpm_list_t) -> AlpmList<T> {
+        AlpmList::new(c_list)
+    }
+}
+
+pub struct AlpmListIterator<T> {
+    item: *mut alpm_list_t,
+    phantom: PhantomData<T>,
+}
+
+
+ impl<T: AlpmListItem<T>> std::iter::Iterator for AlpmListIterator<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
@@ -93,7 +123,7 @@ impl<T> Drop for AlpmList<T> {
     }
 }
 
- impl<T: AmplListItem<T>> std::iter::Iterator for AlpmList<T> {
+ impl<T: AlpmListItem<T>> std::iter::Iterator for AlpmList<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
@@ -104,12 +134,76 @@ impl<T> Drop for AlpmList<T> {
         
             let data =  T::new((*self.current).data);
             self.current = (*self.current).next;
-            //if (*self.current).next != ptr::null_mut() {
-                
-            //} 
-           // println!("Got data {}", (*self.current).data as usize);
             Some(data)
         }
     }
  }
 
+pub struct StringItem{
+    string_ptr: *const c_char,
+}
+
+impl StringItem{
+}
+
+impl AlpmListItem<StringItem> for StringItem{
+    fn new(data: *mut c_void) -> Self{
+        StringItem{
+            string_ptr: data as *const c_char,
+        }
+    }
+    fn to_ptr(&self) -> *mut c_void {
+        self.string_ptr as *mut c_void
+    }
+}
+
+impl<'a,T: AsRef<str> + 'a> From<T> for StringItem{
+    fn from(s: T) -> Self{
+        StringItem{
+            string_ptr: strc_noctx!(s.as_ref()),
+        }
+    }
+}
+
+
+//pub type StringList = AlpmList<StringItem>;
+
+pub struct StringList {
+    alpm_list: AlpmList<StringItem>,
+}
+
+impl AlpmListType<StringItem> for StringList {
+    fn empty() -> Self {
+        StringList{
+            alpm_list: AlpmList::empty(),
+        }
+    }
+
+    fn new(list: *mut alpm_list_t) -> Self {
+        StringList{
+            alpm_list: AlpmList::new(list),
+        }
+    }
+
+    fn add(&mut self, item: StringItem){
+        self.alpm_list.add(item);
+    }
+
+    fn to_ptr(&self) -> *mut alpm_list_t {
+        self.alpm_list.to_ptr()
+    }
+
+    fn iter(&self) -> AlpmListIterator<StringItem> {
+        self.alpm_list.iter()
+    }
+}
+
+impl Drop for StringList{
+    fn drop(&mut self){
+        unsafe{
+            for s in self.alpm_list.iter() {
+                let _ = str_fromraw!(s.string_ptr);
+            }
+        }
+    }
+}

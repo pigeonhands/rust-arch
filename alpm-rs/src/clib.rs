@@ -13,9 +13,9 @@ pub unsafe fn vsn_printf(fmt: *mut c_char, args: va_list::VaList) -> String{
     let mut buf = vec![0;300];
     println!("0] {}", cstr!(fmt));
 
-    let mut testBuff = [0;666];
+    let mut test_buf = [0;666];
 
-    let len = vsnprintf(fmt, 0, testBuff.as_mut_ptr(), args) as usize;
+    let len = vsnprintf(fmt, 0, test_buf.as_mut_ptr(), args) as usize;
     println!("1] {}", len);
     if len > buf.len(){
         buf = vec![0;len + 1].into();

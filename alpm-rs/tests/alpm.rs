@@ -1,4 +1,4 @@
-use alpm_rs;
+use alpm_rs::AlpmListType;
 
 #[test]
 fn test_callbacks(){
@@ -15,6 +15,7 @@ fn test_callbacks(){
        _ => panic!("last error not ok"),
    }
 
+    
     for db in dbs.iter(){
         println!("db] {}", db.name());
     }

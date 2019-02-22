@@ -1,7 +1,7 @@
 use std::os::raw::{c_char, c_void};
 
 use crate::enums::PkgFrom;
-use crate::types::{alpm_list_t, AlpmList,AmplListItem};
+use crate::types::{alpm_list_t, AlpmList,AlpmListItem};
 use crate::db::{alpm_db_t, AlpmDB};
 
 #[link(name="alpm")]
@@ -45,9 +45,12 @@ pub struct Package {
     pub (crate) pkg: *mut alpm_pkg_t,
 }
 
-impl AmplListItem<Package> for Package{
+impl AlpmListItem<Package> for Package{
     fn new(data_ptr: *mut c_void) -> Package{
         (data_ptr as *mut alpm_pkg_t).into()
+    }
+    fn to_ptr(&self) -> *mut c_void {
+        self.pkg as *mut c_void
     }
 }
 

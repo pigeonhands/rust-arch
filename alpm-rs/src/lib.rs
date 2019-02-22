@@ -9,6 +9,9 @@ pub mod package;
 pub mod types;
 pub mod callbacks;
 
+pub use crate::types::{AlpmListType, AlpmListItem};
+
+
 extern crate libc;
 
 use std::error::Error;
@@ -67,9 +70,9 @@ pub fn initialize(root: &str, dbpath: &str) -> Result<Handle, Box<dyn Error>> {
 
     unsafe{
         handle = alpm_initialize(
-                    strc!(root), 
-                    strc!(dbpath), 
-                    &mut err as *mut enums::ErrorNo);
+            strc!(root),
+            strc!(dbpath), 
+            &mut err as *mut enums::ErrorNo);
     }
             
     if err as i32 != 0{

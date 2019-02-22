@@ -1,7 +1,53 @@
 /// string to c-string
+/// required to be converted back to rust string after use
+/// to avoid memory leaking
+macro_rules! strc_noctx {
+    ($e:expr) => {
+       // std::ffi::CString::new($e).unwrap().as_ptr()
+        std::ffi::CString::new($e).expect("CString::new failed").into_raw()
+    };
+}
+
+macro_rules! str_fromraw {
+    ($e:expr) => {
+       // std::ffi::CString::new($e).unwrap().as_ptr()
+        std::ffi::CString::from_raw($e as *mut std::os::raw::c_char)
+    };
+}
+
+
+
+// createates a raw c-string
+// and deallocates it in the deconstructor
+pub struct StrcCtx{
+    pub ptr: *mut c_char,
+}
+
+impl StrcCtx {
+    pub fn new(s: &str) -> StrcCtx{
+        StrcCtx{
+            ptr: strc_noctx!(s),
+        }
+    }
+}
+
+impl Drop for StrcCtx{
+    fn drop(&mut self) {
+        unsafe{
+            let _ = str_fromraw!(self.ptr);
+        }
+    }
+}
+
+
+
+
+/// string to c-string
+/// using ontext
 macro_rules! strc {
     ($e:expr) => {
-        std::ffi::CString::new($e).unwrap().as_ptr()
+       // std::ffi::CString::new($e).unwrap().as_ptr()
+        crate::macros::StrcCtx::new($e).ptr
     };
 }
 
@@ -16,14 +62,28 @@ macro_rules! cstr {
     };
 }
 
-macro_rules! ptr {
-    ($e:expr, $t:ty) => {
-        $e as *mut $t
-    };
-}
-
 macro_rules! to_bool {
     ($e:expr) => {
         if $e == -1 { false } else { true }
     };
+}
+
+use std::os::raw::c_char;
+use std::ffi::CString;
+
+
+// Converts a string into a raw pointer, calls the context then
+// after execution, back into a rust string so it can be disposed
+pub unsafe fn strc_context1(s: &str, context: fn(raw_str: *mut std::os::raw::c_char)){
+    let raw_str = CString::new(s).expect("CString::new failed").into_raw();
+    context(raw_str);
+    let _ = CString::from_raw(raw_str);
+}
+
+pub unsafe fn strc_context2(s1: &str, s2: &str, context: fn(raw_str1: *mut c_char, raw_str2: *mut c_char)){
+    let raw_str1 = CString::new(s1).expect("CString::new failed").into_raw();
+    let raw_str2 = CString::new(s2).expect("CString::new failed").into_raw();
+    context(raw_str1, raw_str2);
+    let _ = CString::from_raw(raw_str1);
+    let _ = CString::from_raw(raw_str2);
 }
