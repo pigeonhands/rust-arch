@@ -1,30 +1,11 @@
-
+use pacman::config::PacmanConfig;
 
 #[test]
-fn parse_config(){
+fn pacman_cfg(){
     let raw_cfg = r#"
 [options]
-RootDir = /path/to/root/dir
-DBPath = /path/to/db/dir
-CacheDir = /path/to/cache/dir
-HookDir = /path/to/hook/dir
-GPGDir = /path/to/gpg/dir
-LogFile = /path/to/log/file
-HoldPkg = hold package
-IgnorePkg = ignore package
-IgnoreGroup = ignore group
-Architecture = neo-classical
-XferCommand = /path/to/command %u
-NoUpgrade = no upgrade
-NoExtract = no extract
-CleanMethod = KeepInstalled KeepCurrent
-SigLevel = PackageRequired
-SigLevel = PackageTrustedOnly
-SigLevel = DatabaseRequired
-SigLevel = DatabaseTrustedOnly
-LocalFileSigLevel = PackageOptional
-LocalFileSigLevel = PackageTrustedOnly
-RemoteFileSigLevel = PackageNever
+Color
+RootDir = /rootdir
 UseSyslog
 Color
 UseDelta = 1.1
@@ -33,12 +14,22 @@ CheckSpace
 VerbosePkgLists
 DisableDownloadTimeout
 
-[repo1]
-Server = foo
-Server = bar
+
+[core]
+Server = s1
+Server = s2
 SigLevel = Never
-Usage = Sync Search
+Usage = use
 
 Include = testdata/custom
     "#;
+
+    let cfg  = PacmanConfig::parse(raw_cfg);
+    assert_eq!(cfg.root_dir, "/rootdir");
+    assert_eq!(cfg.color, true);
+
+    let core = cfg.repo("core").unwrap();
+    assert_eq!(core.servers.len(), 2);
+    assert_eq!(core.servers[0], "s1");
+    assert_eq!(core.servers[1], "s2");
 }

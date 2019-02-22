@@ -5,6 +5,6 @@ authors = ["Sam <sam.mackenzie@live.com>"]
 edition = "2018"
 description="Library for interacting with pacman package manager on linux"
 license="MIT"
+repository="https://github.com/BahNahNah/rust-arch/tree/master/pacman"
 
 [dependencies]
-rust-ini = "0.13.0"
