@@ -54,27 +54,32 @@ pub struct Response {
 }
 
 pub fn search(arg: &str) -> Result<Response, Box<Error>> {
-    let url = Url::parse_with_params(&AUR_RPC_URL,
-                                 &[("v", AUR_RPC_VER), ("type", "search"), ("arg", arg)])?;
+    let url = Url::parse_with_params(&AUR_RPC_URL,&[
+                                ("v", AUR_RPC_VER), 
+                                ("type", "search"), 
+                                ("arg", arg)])?;
     let resp: Response = reqwest::get(url.as_str())?
         .json()?;
     Ok(resp)
 }
 
-pub fn info(packages: &[&str]) -> Result<Response, Box<Error>>{
-    let mut args = Vec::new();
-    args.push(("v", AUR_RPC_VER));
-    args.push(("type", "info"));
-    for p in packages{
-        args.push(("arg[]", p));
+pub fn info<'a, T, S>(needles: T) -> Result<Response, Box<Error>>
+    where
+        T: IntoIterator<Item=S>,
+        S: AsRef<str> + 'a{
+        let mut args = Vec::new();
+        args.push(("v", AUR_RPC_VER.to_string()));
+        args.push(("type", "info".to_string()));
+        for n in needles{
+            args.push(("arg[]", n.as_ref().to_string()));
+        }
+
+        let url = Url::parse_with_params(&AUR_RPC_URL, &args)?;
+
+        let resp: Response = reqwest::get(url.as_str())?
+            .json()?;
+        Ok(resp)
     }
-
-    let url = Url::parse_with_params(&AUR_RPC_URL, &args)?;
-
-    let resp: Response = reqwest::get(url.as_str())?
-        .json()?;
-    Ok(resp)
-}
 
 pub fn clone(package: &str, p: &Path) -> Result<Repository, Box<Error>>{
     Ok(Repository::clone(

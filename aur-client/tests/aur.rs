@@ -8,6 +8,7 @@ fn search() {
 
 #[test]
 fn info(){
-    let resp = aur::info(&["python3"]).unwrap();
+    let resp = aur::info(&["spotify"]).unwrap();
     assert_eq!(resp.error, None);
+    assert_ne!(resp.results.len(), 0);
 }
