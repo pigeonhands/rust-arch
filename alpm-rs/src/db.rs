@@ -87,9 +87,14 @@ impl AlpmDB{
         }
     }
 
-    pub fn get_pkg(&self, name: &str) -> Package{
+    pub fn get_pkg(&self, name: &str) -> Option<Package> {
         unsafe{
-            alpm_db_get_pkg(self.db, strc!(name)).into()
+            let pkg = alpm_db_get_pkg(self.db, strc!(name));
+            if pkg != std::ptr::null_mut() {
+                Some(pkg.into())
+            }else{
+                None
+            }
         }
     }
 }
