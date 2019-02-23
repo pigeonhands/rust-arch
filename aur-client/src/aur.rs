@@ -63,15 +63,12 @@ pub fn search(arg: &str) -> Result<Response, Box<Error>> {
     Ok(resp)
 }
 
-pub fn info<'a, T, S>(needles: T) -> Result<Response, Box<Error>>
-    where
-        T: IntoIterator<Item=S>,
-        S: AsRef<str> + 'a{
+pub fn info(needles: &[&str]) -> Result<Response, Box<Error>>{
         let mut args = Vec::new();
-        args.push(("v", AUR_RPC_VER.to_string()));
-        args.push(("type", "info".to_string()));
+        args.push(("v", AUR_RPC_VER));
+        args.push(("type", "info"));
         for n in needles{
-            args.push(("arg[]", n.as_ref().to_string()));
+            args.push(("arg[]", n));
         }
 
         let url = Url::parse_with_params(&AUR_RPC_URL, &args)?;
