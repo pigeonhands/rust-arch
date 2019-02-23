@@ -17,7 +17,10 @@ fn test_callbacks(){
    }
 
     
-    for _ in dbs.iter(){
+    for db in dbs {
+        for pkg in db.search_one("git"){
+            println!("pkg");
+        }
     }
     
 }

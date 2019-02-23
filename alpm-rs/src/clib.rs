@@ -25,12 +25,7 @@ pub struct VaList{
 
 
 pub unsafe fn vsn_printf(fmt: *mut c_char, args: VaList) -> String{
-    let mut buf = vec![0;64];
-    let len = vsnprintf(buf.as_mut_ptr(), buf.len(), fmt, args) as usize;
-    if len > buf.len(){
-        buf = vec![0;len + 1].into();
-       vsnprintf(buf.as_mut_ptr(), buf.len(), fmt, args);
-    }
-
+    let mut buf = vec![0;255];
+    vsnprintf(buf.as_mut_ptr(), buf.len(), fmt, args) as usize;
     cstr!(buf.as_mut_ptr() as *mut c_char).to_string()
 }
