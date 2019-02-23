@@ -108,7 +108,8 @@ impl<T> Drop for AlpmList<T> {
     fn drop(&mut self) {
         unsafe{
             if self.list != std::ptr::null_mut(){
-                alpm_list_free(self.list);
+                //causing undefined behaviours
+               // alpm_list_free(self.list);
             }
         }
     }
