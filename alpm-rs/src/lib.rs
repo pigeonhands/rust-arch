@@ -9,7 +9,7 @@ pub mod package;
 pub mod types;
 pub mod callbacks;
 
-pub use crate::types::{AlpmListType, AlpmListItem};
+pub use crate::types::{List, AlpmListItem};
 
 
 extern crate libc;

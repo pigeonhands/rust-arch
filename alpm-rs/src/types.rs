@@ -16,7 +16,7 @@ pub struct alpm_list_t  {
 	pub (crate) next: *mut alpm_list_t,
 }
 
-pub trait AlpmListType<T: AlpmListItem<T>> {
+pub trait List<T: AlpmListItem<T>> {
     fn new(c_list: *mut alpm_list_t) -> Self;
     fn empty() -> Self;
     fn add(&mut self, item : T);
@@ -39,7 +39,7 @@ pub struct AlpmList<T> {
 }
 
 
-impl<T: AlpmListItem<T>> AlpmListType<T> for AlpmList<T> {
+impl<T: AlpmListItem<T>> List<T> for AlpmList<T> {
     fn new(c_list: *mut alpm_list_t) -> AlpmList<T> {
         AlpmList {
             list: c_list,
@@ -172,7 +172,7 @@ pub struct StringList {
     alpm_list: AlpmList<StringItem>,
 }
 
-impl AlpmListType<StringItem> for StringList {
+impl crate::types::List<StringItem> for StringList {
     fn empty() -> Self {
         StringList{
             alpm_list: AlpmList::empty(),
