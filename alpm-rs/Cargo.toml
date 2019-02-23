@@ -12,4 +12,3 @@ readme="README.md"
 
 [dependencies]
 libc = "0.2.48"
-va_list="0.1.3"

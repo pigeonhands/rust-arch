@@ -36,9 +36,11 @@ extern {
     fn alpm_unregister_all_syncdbs(handle : *mut alpm_handle_t) -> i32;
     
     fn alpm_register_syncdb(handle : *mut alpm_handle_t, treename : *const c_char, level: i32 ) -> *mut alpm_db_t;
+    fn alpm_sync_sysupgrade(handle: *mut alpm_handle_t, enable_downgrade: i32) -> i32;
 
+    fn alpm_add_pkg(handle: *mut alpm_handle_t, pkg: *mut alpm_pkg_t) -> i32;
+    fn alpm_remove_pkg(handle: *mut alpm_handle_t, pkg: *mut alpm_pkg_t) -> i32;
 }
-
 
 #[repr(C)]
 struct alpm_handle_t{
@@ -170,5 +172,31 @@ impl Handle{
             None
         }
     }
+
+    /// Search for packages to upgrade and add them to the transaction. 
+    pub fn sys_upgrade(&self, enable_downgrade: bool) -> bool {
+        let en_dg = if enable_downgrade{ 1 }else { 0 };
+        unsafe{
+            to_bool!(alpm_sync_sysupgrade(self.alpm_handle, en_dg))
+        }
+    }
+
+    /// Add a package to the transaction.
+    /// If the package was loaded by alpm_pkg_load(), it will be freed upon
+    /// alpm_trans_release() invocation.
+    
+    pub fn add_pkg(&self, pkg: &Package) -> bool{
+        unsafe{
+            to_bool!(alpm_add_pkg(self.alpm_handle, pkg.pkg))
+        }
+    }
+
+    /// Add a package removal action to the transaction.
+    pub fn remove_pkg(&self, pkg: &Package) -> bool{
+        unsafe{
+            to_bool!(alpm_remove_pkg(self.alpm_handle, pkg.pkg))
+        }
+    }
+
 }
 

@@ -3,14 +3,12 @@
 /// to avoid memory leaking
 macro_rules! strc_noctx {
     ($e:expr) => {
-       // std::ffi::CString::new($e).unwrap().as_ptr()
         std::ffi::CString::new($e).expect("CString::new failed").into_raw()
     };
 }
 
 macro_rules! str_fromraw {
     ($e:expr) => {
-       // std::ffi::CString::new($e).unwrap().as_ptr()
         std::ffi::CString::from_raw($e as *mut std::os::raw::c_char)
     };
 }
@@ -46,7 +44,6 @@ impl Drop for StrcCtx{
 /// using ontext
 macro_rules! strc {
     ($e:expr) => {
-       // std::ffi::CString::new($e).unwrap().as_ptr()
         crate::macros::StrcCtx::new($e).ptr
     };
 }
@@ -75,14 +72,14 @@ use std::ffi::CString;
 // Converts a string into a raw pointer, calls the context then
 // after execution, back into a rust string so it can be disposed
 pub unsafe fn strc_context1(s: &str, context: fn(raw_str: *mut std::os::raw::c_char)){
-    let raw_str = CString::new(s).expect("CString::new failed").into_raw();
+    let raw_str = strc_noctx!(s);
     context(raw_str);
     let _ = CString::from_raw(raw_str);
 }
 
 pub unsafe fn strc_context2(s1: &str, s2: &str, context: fn(raw_str1: *mut c_char, raw_str2: *mut c_char)){
-    let raw_str1 = CString::new(s1).expect("CString::new failed").into_raw();
-    let raw_str2 = CString::new(s2).expect("CString::new failed").into_raw();
+    let raw_str1 = strc_noctx!(s1);
+    let raw_str2 = strc_noctx!(s2);
     context(raw_str1, raw_str2);
     let _ = CString::from_raw(raw_str1);
     let _ = CString::from_raw(raw_str2);

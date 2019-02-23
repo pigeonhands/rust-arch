@@ -2,7 +2,7 @@ use std::os::raw::{c_char, c_void};
 
 use crate::enums::PkgFrom;
 use crate::types::{alpm_list_t, AlpmList,AlpmListItem};
-use crate::db::{alpm_db_t, AlpmDB};
+use crate::db::{alpm_db_t, AlpmDB,DBList};
 
 #[link(name="alpm")]
 extern {
@@ -24,6 +24,8 @@ extern {
     fn alpm_pkg_compute_optionalfor(pkg: *mut alpm_pkg_t)-> *mut alpm_list_t;
     fn alpm_pkg_get_validation(pkg: *mut alpm_pkg_t) -> i32;
     fn alpm_pkg_get_db(pkg: *mut alpm_pkg_t) -> *mut alpm_db_t;
+
+    fn alpm_sync_newversion(pkg: *mut alpm_pkg_t, db_sync: *mut alpm_list_t) -> *mut alpm_pkg_t;
 }
 
 pub type PackageList = AlpmList<Package>;
@@ -187,10 +189,27 @@ impl Package{
         }
     }
 
+    pub fn newer_version(&self, dbs: &DBList) -> Option<Package> {
+        
+        unsafe {
+            let p : Package = alpm_sync_newversion(self.pkg, dbs.list).into();
+            if p.pkg == std::ptr::null_mut(){
+                None
+            }else{
+                println!(">not null");
+                Some(p)
+            }
+        }
+    }
+
     /// Free package
     pub fn free(&self) -> bool {
         unsafe{
-            to_bool!(alpm_pkg_free(self.pkg))
+            if self.pkg == std::ptr::null_mut() {
+                true
+            }else{            
+                to_bool!(alpm_pkg_free(self.pkg))
+            }   
         }
-    }
+    }    
 }

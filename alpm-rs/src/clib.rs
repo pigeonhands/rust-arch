@@ -1,28 +1,36 @@
 
 
 
-use std::os::raw::c_char;
+use std::os::raw::{c_char, c_void};
 
 #[link(name="alpm")]
 extern {
-    fn vsnprintf(s: *mut c_char, num: usize,fmt: *mut i32, args: va_list::VaList) -> i32;
+    fn vsnprintf(s: *mut c_char, num: usize,fmt: *mut c_char, args: VaList) -> i32;
 }
 
-pub unsafe fn vsn_printf(fmt: *mut c_char, args: va_list::VaList) -> String{
+#[repr(C)]
+#[derive(Debug,Copy,Clone)]
+pub struct VaListInner {
+    gp_offset: u32,
+    fp_offset: u32,
+    overflow_arg_area: *const c_void,
+    reg_save_area: *const c_void,
+}
 
-    let mut buf = vec![0;300];
-    println!("0] {}", cstr!(fmt));
+#[derive(Debug,Copy,Clone)]
+#[repr(C)]
+pub struct VaList{
+    innter: *mut VaListInner,
+}
 
-    let mut test_buf = [0;666];
 
-    let len = vsnprintf(fmt, 0, test_buf.as_mut_ptr(), args) as usize;
-    println!("1] {}", len);
+pub unsafe fn vsn_printf(fmt: *mut c_char, args: VaList) -> String{
+    let mut buf = vec![0;64];
+    let len = vsnprintf(buf.as_mut_ptr(), buf.len(), fmt, args) as usize;
     if len > buf.len(){
         buf = vec![0;len + 1].into();
-      //  vsnprintf(fmt, buf.len(), ptr!(buf.as_mut_ptr(),c_char), args);
+       vsnprintf(buf.as_mut_ptr(), buf.len(), fmt, args);
     }
-        println!("2] {}", len);
-
 
     cstr!(buf.as_mut_ptr() as *mut c_char).to_string()
 }

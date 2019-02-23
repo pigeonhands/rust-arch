@@ -91,17 +91,6 @@ pub struct AlpmListIterator<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        /*
-        if self.item == ptr::null_mut(){
-            return None;
-        }
-        
-            if (*self.item).next != ptr::null_mut() {
-                self.item = (*self.item).next;
-                Some(T::new((*self.item).data ))
-            } else {
-                None
-            }*/
         unsafe{
             if self.item == ptr::null_mut() {
                 return None;
@@ -118,7 +107,9 @@ pub struct AlpmListIterator<T> {
 impl<T> Drop for AlpmList<T> {
     fn drop(&mut self) {
         unsafe{
-            alpm_list_free(self.list);
+            if self.list != std::ptr::null_mut(){
+                alpm_list_free(self.list);
+            }
         }
     }
 }
@@ -164,9 +155,6 @@ impl<'a,T: AsRef<str> + 'a> From<T> for StringItem{
         }
     }
 }
-
-
-//pub type StringList = AlpmList<StringItem>;
 
 pub struct StringList {
     alpm_list: AlpmList<StringItem>,

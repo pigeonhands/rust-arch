@@ -5,6 +5,7 @@ fn test_callbacks(){
     let handle = alpm_rs::initialize("/", "/var/lib/pacman").unwrap();
 
     alpm_rs::callbacks::set_log_callback(&handle, |l,m| println!("{}] {}", l, &m));
+    alpm_rs::callbacks::set_download_callback(&handle, |f,x,t| println!("{},{},{}", f,x,t));
 
     handle.register_syncdb("core", 0);
     handle.register_syncdb("community", 0);
@@ -16,8 +17,7 @@ fn test_callbacks(){
    }
 
     
-    for db in dbs.iter(){
-        println!("db] {}", db.name());
+    for _ in dbs.iter(){
     }
     
 }

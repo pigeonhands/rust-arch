@@ -26,5 +26,5 @@ fn search_db(){
    }
 
     let search = db.search(&["python*"]);
-   assert_ne!( search.iter().count(), 0);
+    assert_ne!( search.iter().count(), 0);
 }
