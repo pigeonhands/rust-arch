@@ -1,16 +1,16 @@
 #![allow(dead_code)]
 
 #[allow(non_camel_case_types)]
-const ALPM_LOG_ERROR: i32  = 1;
-const ALPM_LOG_WARNING : i32 =  (1 << 1);
-const ALPM_LOG_DEBUG :  i32 = (1 << 2);
-const ALPM_LOG_FUNCTION : i32 = (1 << 3);
-
-const ALPM_PKG_VALIDATION_UNKNOWN: i32  = 0;
-const ALPM_PKG_VALIDATION_NONE : i32 =  (1 << 0);
-const ALPM_PKG_VALIDATION_MD5SUM :  i32 = (1 << 1);
-const ALPM_PKG_VALIDATION_SHA256SUM : i32 = (1 << 2);
-const ALPM_PKG_VALIDATION_SIGNATURE : i32 = (1 << 3);
+pub const ALPM_LOG_ERROR: i32  = 1;
+pub const ALPM_LOG_WARNING : i32 =  (1 << 1);
+pub const ALPM_LOG_DEBUG :  i32 = (1 << 2);
+pub const ALPM_LOG_FUNCTION : i32 = (1 << 3);
+pub 
+pub const ALPM_PKG_VALIDATION_UNKNOWN: i32  = 0;
+pub const ALPM_PKG_VALIDATION_NONE : i32 =  (1 << 0);
+pub const ALPM_PKG_VALIDATION_MD5SUM :  i32 = (1 << 1);
+pub const ALPM_PKG_VALIDATION_SHA256SUM : i32 = (1 << 2);
+pub const ALPM_PKG_VALIDATION_SIGNATURE : i32 = (1 << 3);
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
