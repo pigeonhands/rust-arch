@@ -2,9 +2,8 @@ extern crate libc;
 
 use std::os::raw::{c_char,c_void};
 
-use crate::package::{PackageList};
+use crate::package::{PackageList,alpm_pkg_t,Package};
 use crate::types::{alpm_list_t, List, AlpmList, AlpmListItem, StringList };
-
 
 #[link(name="alpm")]
 extern {
@@ -12,6 +11,7 @@ extern {
     fn alpm_db_unregister(db: *mut alpm_db_t) -> i32;
     fn alpm_db_get_name(db: *mut alpm_db_t) -> *const c_char;
     fn alpm_db_search(db: *mut alpm_db_t, needles: *mut alpm_list_t) -> *mut alpm_list_t;
+    fn alpm_db_get_pkg(db: *mut alpm_db_t, name: *const c_char) -> *mut alpm_pkg_t;
 }
 
 #[repr(C)]
@@ -84,6 +84,12 @@ impl AlpmDB{
     pub fn unregister(&self) -> bool{
         unsafe{
             to_bool!(alpm_db_unregister(self.db))
+        }
+    }
+
+    pub fn get_pkg(&self, name: &str) -> Package{
+        unsafe{
+            alpm_db_get_pkg(self.db, strc!(name)).into()
         }
     }
 }

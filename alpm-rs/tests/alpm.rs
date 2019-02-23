@@ -1,4 +1,3 @@
-use alpm_rs::List;
 
 #[test]
 fn test_callbacks(){
@@ -18,8 +17,7 @@ fn test_callbacks(){
 
     
     for db in dbs {
-        for pkg in db.search_one("git"){
-            println!("pkg");
+        for _ in db.search_one("git"){
         }
     }
     

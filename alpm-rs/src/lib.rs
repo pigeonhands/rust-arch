@@ -38,6 +38,13 @@ extern {
     fn alpm_register_syncdb(handle : *mut alpm_handle_t, treename : *const c_char, level: i32 ) -> *mut alpm_db_t;
     fn alpm_sync_sysupgrade(handle: *mut alpm_handle_t, enable_downgrade: i32) -> i32;
 
+    fn alpm_trans_init(handle: *mut alpm_handle_t, flags: i32) -> i32;
+    fn alpm_trans_get_add(handle: *mut alpm_handle_t) -> *mut alpm_list_t;
+    //fn alpm_trans_commit(handle: *mut alpm_handle_t, list: *mut alpm_list_t) -> i32;
+    fn alpm_trans_release(handle: *mut alpm_handle_t) -> i32;
+
+
+
     fn alpm_add_pkg(handle: *mut alpm_handle_t, pkg: *mut alpm_pkg_t) -> i32;
     fn alpm_remove_pkg(handle: *mut alpm_handle_t, pkg: *mut alpm_pkg_t) -> i32;
 }
@@ -181,6 +188,12 @@ impl Handle{
         }
     }
 
+    pub fn trans_init(&self, flags: i32) -> bool {
+        unsafe{
+            to_bool!(alpm_trans_init(self.alpm_handle, flags))
+        }
+    }
+
     /// Add a package to the transaction.
     /// If the package was loaded by alpm_pkg_load(), it will be freed upon
     /// alpm_trans_release() invocation.
@@ -195,6 +208,18 @@ impl Handle{
     pub fn remove_pkg(&self, pkg: &Package) -> bool{
         unsafe{
             to_bool!(alpm_remove_pkg(self.alpm_handle, pkg.pkg))
+        }
+    }
+
+    pub fn trans_get_add(&self) -> package::PackageList {
+        unsafe{
+            alpm_trans_get_add(self.alpm_handle).into()
+        }
+    }
+
+    pub fn trans_release(&self) -> bool {
+        unsafe{
+            to_bool!(alpm_trans_release(self.alpm_handle))
         }
     }
 

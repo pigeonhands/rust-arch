@@ -21,6 +21,41 @@ pub enum PkgFrom {
 	ALPM_PKG_FROM_SYNCDB
 }
 
+pub const ALPM_TRANS_FLAG_NODEPS : i32 = 1;
+/** Ignore file conflicts and overwrite files. */
+pub const ALPM_TRANS_FLAG_FORCE : i32 = (1 << 1);
+/** Delete files even if they are tagged as backup. */
+pub const ALPM_TRANS_FLAG_NOSAVE : i32 = (1 << 2);
+/** Ignore version numbers when checking dependencies. */
+pub const ALPM_TRANS_FLAG_NODEPVERSION : i32 = (1 << 3);
+/** Remove also any packages depending on a package being removed. */
+pub const ALPM_TRANS_FLAG_CASCADE : i32 = (1 << 4);
+/** Remove packages and their unneeded deps (not explicitly installed). */
+pub const ALPM_TRANS_FLAG_RECURSE : i32 = (1 << 5);
+/** Modify database but do not commit changes to the filesystem. */
+pub const ALPM_TRANS_FLAG_DBONLY : i32 = (1 << 6);
+/* (1 << 7) flag can go here */
+/** Use pub const ALPM_PKG_REASON_DEPEND when installing packages. */
+pub const ALPM_TRANS_FLAG_ALLDEPS : i32 = (1 << 8);
+/** Only download packages and do not actually install. */
+pub const ALPM_TRANS_FLAG_DOWNLOADONLY : i32 = (1 << 9);
+/** Do not execute install scriptlets after installing. */
+pub const ALPM_TRANS_FLAG_NOSCRIPTLET : i32 = (1 << 10);
+/** Ignore dependency conflicts. */
+pub const ALPM_TRANS_FLAG_NOCONFLICTS : i32 = (1 << 11);
+/* (1 << 12) flag can go here */
+/** Do not install a package if it is already installed and up to date. */
+pub const ALPM_TRANS_FLAG_NEEDED : i32 = (1 << 13);
+/** Use pub const ALPM_PKG_REASON_EXPLICIT when installing packages. */
+pub const ALPM_TRANS_FLAG_ALLEXPLICIT : i32 = (1 << 14);
+/** Do not remove a package if it is needed by another one. */
+pub const ALPM_TRANS_FLAG_UNNEEDED : i32 = (1 << 15);
+/** Remove also explicitly installed unneeded deps (use with pub const ALPM_TRANS_FLAG_RECURSE). */
+pub const ALPM_TRANS_FLAG_RECURSEALL : i32 = (1 << 16);
+/** Do not lock the database during the operation. */
+pub const ALPM_TRANS_FLAG_NOLOCK : i32 = (1 << 17);
+
+
 #[derive(Debug,Copy,Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]

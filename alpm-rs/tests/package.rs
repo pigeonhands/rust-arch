@@ -41,7 +41,7 @@ fn local_cashe(){
 #[test]
 fn newer_version() {
     let handle = alpm_rs::initialize("/", "/var/lib/pacman").unwrap();
-    let core = handle.register_syncdb("core", 0);
+    let _ = handle.register_syncdb("core", 0);
     let dbs = handle.sync_dbs();
 
     match handle.error_no(){
