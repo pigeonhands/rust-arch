@@ -370,15 +370,15 @@ pub struct QuestionArgs {
 
 
 impl QuestionArgs {
-    pub fn set_answer(&self, ans: bool){
+    pub fn set_answer(&self, ans: i32){
         unsafe{
-            (*self.question_raw).answer = if ans { 1 }else { 0 };
+            (*self.question_raw).answer = ans;
         }
     }
 
-    pub fn answer(&self) -> bool {
+    pub fn answer(&self) -> i32 {
         unsafe{
-            (*self.question_raw).answer!= 0
+            (*self.question_raw).answer
         }
     }
 
