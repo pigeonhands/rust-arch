@@ -1,6 +1,6 @@
 #![allow(dead_code)]
-
 #[allow(non_camel_case_types)]
+
 pub const ALPM_LOG_ERROR: i32  = 1;
 pub const ALPM_LOG_WARNING : i32 =  (1 << 1);
 pub const ALPM_LOG_DEBUG :  i32 = (1 << 2);
@@ -20,6 +20,28 @@ pub enum PkgFrom {
 	ALPM_PKG_FROM_LOCALDB,
 	ALPM_PKG_FROM_SYNCDB
 }
+
+
+#[derive(Copy, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub enum alpm_depmod {
+	_invalid,
+	ALPM_DEP_MOD_ANY,
+	ALPM_DEP_MOD_EQ,
+	ALPM_DEP_MOD_GE,
+	ALPM_DEP_MOD_LE,
+	ALPM_DEP_MOD_GT,
+	ALPM_DEP_MOD_LT
+}
+
+pub const ALPM_QUESTION_INSTALL_IGNOREPKG : i32 = (1 << 0);
+pub const ALPM_QUESTION_REPLACE_PKG : i32 = (1 << 1);
+pub const ALPM_QUESTION_CONFLICT_PKG : i32 = (1 << 2);
+pub const ALPM_QUESTION_CORRUPTED_PKG : i32 = (1 << 3);
+pub const ALPM_QUESTION_REMOVE_PKGS : i32 = (1 << 4);
+pub const ALPM_QUESTION_SELECT_PROVIDER : i32 = (1 << 5);
+pub const ALPM_QUESTION_IMPORT_KEY : i32 = (1 << 6);
 
 pub const ALPM_TRANS_FLAG_NODEPS : i32 = 1;
 /** Ignore file conflicts and overwrite files. */

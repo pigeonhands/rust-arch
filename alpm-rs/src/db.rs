@@ -3,7 +3,7 @@ extern crate libc;
 use std::os::raw::{c_char,c_void};
 
 use crate::package::{PackageList,alpm_pkg_t,Package};
-use crate::types::{alpm_list_t, List, AlpmList, AlpmListItem, StringList };
+use crate::list::{alpm_list_t, List, AlpmList, AlpmListItem, StringList };
 
 #[link(name="alpm")]
 extern {

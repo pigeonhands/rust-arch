@@ -6,10 +6,11 @@ pub mod error;
 pub mod enums;
 pub mod db;
 pub mod package;
-pub mod types;
+pub mod list;
 pub mod callbacks;
+pub mod question;
 
-pub use crate::types::{List, AlpmListItem};
+pub use crate::list::{List, AlpmListItem};
 
 
 extern crate libc;
@@ -18,7 +19,7 @@ use std::error::Error;
 use std::os::raw::c_char;
 
 use crate::package::{Package,alpm_pkg_t};
-use crate::types::{alpm_list_t};
+use crate::list::{alpm_list_t};
 use crate::db::{AlpmDB,alpm_db_t, DBList};
 use crate::enums::ErrorNo;
 

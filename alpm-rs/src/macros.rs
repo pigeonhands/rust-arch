@@ -59,6 +59,17 @@ macro_rules! cstr {
     };
 }
 
+macro_rules! cstring {
+    ($e:expr) => {
+        if $e == std::ptr::null_mut() {
+                "".to_string()
+            }else{
+                unsafe { std::ffi::CStr::from_ptr($e).to_str().unwrap().to_string() }
+            }
+    };
+}
+
+
 macro_rules! to_bool {
     ($e:expr) => {
         if $e == -1 { false } else { true }

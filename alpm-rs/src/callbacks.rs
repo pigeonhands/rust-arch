@@ -1,22 +1,38 @@
-use std::os::raw::c_char;
+use std::os::raw::{c_char};
+use crate::clib;
+use crate::question::{alpm_question_t,QuestionArgs};
 
 use super::{Handle,alpm_handle_t};
-use crate::clib;
+
 
 #[link(name="alpm")]
 extern{
     fn alpm_option_set_logcb(handle : *mut alpm_handle_t, f: extern fn(i32, *mut c_char, clib::VaList)) -> i32;
-
     fn alpm_option_set_dlcb(handle : *mut alpm_handle_t,f: extern fn(filename: *mut c_char, xfered: i64, total: i64)) -> i32;
-
+    fn alpm_option_set_questioncb(handle : *mut alpm_handle_t,f: extern fn(question: *mut alpm_question_t)) -> i32;
 }
+
+
+/*
+type LogCallback = Option<Fn(i32,String)>;
+type DownloadCallback<T: Fn(&str,i64,i64)> = T;
+type QuestionCallback<T: Fn(QuestionArgs)> = T;
+
+
+static mut LOG_CALLBACK : Option<Box<LogCallback>> = None;
+static mut DOWNLOAD_CALLBACK : Option<DownloadCallback> = None;
+static mut QUESTION_CALLBACK : Option<QuestionCallback> = None;
+*/
+
 
 type LogCallback = fn(i32,String);
 type DownloadCallback = fn(filename: &str, downloaded: i64, total: i64);
+type QuestionCallback = fn(question: QuestionArgs);
 
 
 static mut LOG_CALLBACK : Option<LogCallback> = None;
 static mut DOWNLOAD_CALLBACK : Option<DownloadCallback> = None;
+static mut QUESTION_CALLBACK : Option<QuestionCallback> = None;
 
 
 extern "C" fn alpm_log_cb_handler(level: i32, fmt: *mut c_char, args: clib::VaList){
@@ -57,5 +73,25 @@ pub fn set_download_callback(h: &Handle, cb: DownloadCallback){
             _ => {},
         }
         DOWNLOAD_CALLBACK = Some(cb);
+    }
+}
+
+extern "C" fn alpm_question_handler(q_raw: *mut alpm_question_t){
+    unsafe{
+        if let Some(f) = QUESTION_CALLBACK{
+            f(q_raw.into());
+        }
+    }
+}
+
+pub fn set_question_callback(h: &Handle, cb: QuestionCallback){
+    unsafe{
+        match QUESTION_CALLBACK{
+            None => {
+                alpm_option_set_questioncb(h.alpm_handle, alpm_question_handler);
+            },
+            _ => {},
+        }
+        QUESTION_CALLBACK = Some(cb);
     }
 }

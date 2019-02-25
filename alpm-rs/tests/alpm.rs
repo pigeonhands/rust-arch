@@ -4,6 +4,10 @@ fn test_callbacks(){
     let handle = alpm_rs::initialize("/", "/var/lib/pacman").unwrap();
 
     alpm_rs::callbacks::set_log_callback(&handle, |l,m| println!("{}] {}", l, &m));
+    alpm_rs::callbacks::set_question_callback(&handle, |q| {
+        let qany = q.to_any();
+        println!("Question: {} {}",qany.question_type, qany.answer)
+    });
     alpm_rs::callbacks::set_download_callback(&handle, |f,x,t| println!("{},{},{}", f,x,t));
 
     handle.register_syncdb("core", 0);

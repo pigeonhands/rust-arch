@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 
 #[link(name="alpm")]
 extern {
-    fn alpm_list_free(list: *mut alpm_list_t);
+    //fn alpm_list_free(list: *mut alpm_list_t);
     fn alpm_list_add(list: *mut alpm_list_t, data: *mut c_void) -> *mut alpm_list_t;
 }
 
@@ -106,12 +106,12 @@ pub struct AlpmListIterator<T> {
 
 impl<T> Drop for AlpmList<T> {
     fn drop(&mut self) {
-        unsafe{
+       /* unsafe{
             if self.list != std::ptr::null_mut(){
-                //causing undefined behaviours
-               // alpm_list_free(self.list);
+                causing undefined behaviours
+                alpm_list_free(self.list);
             }
-        }
+        }*/
     }
 }
 
@@ -161,7 +161,7 @@ pub struct StringList {
     alpm_list: AlpmList<StringItem>,
 }
 
-impl crate::types::List<StringItem> for StringList {
+impl crate::list::List<StringItem> for StringList {
     fn empty() -> Self {
         StringList{
             alpm_list: AlpmList::empty(),

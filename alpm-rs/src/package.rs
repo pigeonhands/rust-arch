@@ -1,7 +1,7 @@
 use std::os::raw::{c_char, c_void};
 
 use crate::enums::PkgFrom;
-use crate::types::{alpm_list_t, AlpmList,AlpmListItem};
+use crate::list::{alpm_list_t, AlpmList,AlpmListItem};
 use crate::db::{alpm_db_t, AlpmDB,DBList};
 
 #[link(name="alpm")]
