@@ -258,21 +258,17 @@ impl From<*mut alpm_question_t> for QuestionReplacePkg{
 pub struct QuestionConflict{
     pub question_type: i32,
     pub answer: i32,
-    pub oldpkg: Package,
-    pub newpkg: Package,
-    pub newdb: AlpmDB,
+    pub conflict: Conflict,
 }
 
 
 impl From<*mut alpm_question_t> for QuestionConflict{
     fn from(q_raw: *mut alpm_question_t) -> Self{
-        let q = unsafe{ *(q_raw as *mut alpm_question_replace_t) };
+        let q = unsafe{ *(q_raw as *mut alpm_question_conflict_t) };
         QuestionConflict{
             question_type: q.question_type,
             answer: q.answer,
-            oldpkg: q.oldpkg.into(),
-            newpkg: q.newpkg.into(),
-            newdb: q.newdb.into(),
+            conflict: q.conflict.into(),
         }
     }
 }
