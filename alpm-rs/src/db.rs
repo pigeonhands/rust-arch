@@ -17,6 +17,8 @@ extern {
     fn alpm_db_get_name(db: *mut alpm_db_t) -> *const c_char;
     fn alpm_db_search(db: *mut alpm_db_t, needles: *mut alpm_list_t) -> *mut alpm_list_t;
     fn alpm_db_get_pkg(db: *mut alpm_db_t, name: *const c_char) -> *mut alpm_pkg_t;
+
+    fn alpm_db_update(force: i32, db: *mut alpm_db_t) -> i32;
     fn alpm_db_get_servers(db: *mut alpm_db_t) -> *mut alpm_list_t;
     fn alpm_db_set_servers(db: *mut alpm_db_t, servers: *mut alpm_list_t) -> i32;
     fn alpm_db_add_server(db: *mut alpm_db_t,server: *mut c_char) -> i32;
@@ -107,6 +109,18 @@ impl AlpmDB{
             }
         }
     }
+
+    pub fn update(&self, force: bool) -> bool{
+        let force_i = if force {
+            1
+        }else{
+            0
+        };
+
+        unsafe{
+            to_bool!(alpm_db_update(force_i, self.db))
+        }
+    } 
 
     pub fn set_servers(&self, servers: &[&str]) -> bool{
         unsafe{
