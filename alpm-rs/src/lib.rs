@@ -130,9 +130,9 @@ impl Handle{
     }
 
     /// Release handle
-    pub fn release(&self) -> i32 {
+    pub fn release(&self) -> bool {
         unsafe{
-            alpm_release(self.alpm_handle)
+            to_bool!(alpm_release(self.alpm_handle))
         }
     }
 
