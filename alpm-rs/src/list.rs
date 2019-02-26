@@ -39,8 +39,8 @@ pub struct AlpmList<T> {
 }
 
 
-impl<T: AlpmListItem<T>> List<T> for AlpmList<T> {
-    fn new(c_list: *mut alpm_list_t) -> AlpmList<T> {
+impl<T: AlpmListItem<T>> AlpmList<T> {
+    pub fn new(c_list: *mut alpm_list_t) -> AlpmList<T> {
         AlpmList {
             list: c_list,
             current: c_list,
@@ -48,7 +48,7 @@ impl<T: AlpmListItem<T>> List<T> for AlpmList<T> {
         }
     }
 
-    fn empty() -> AlpmList<T>{
+    pub fn empty() -> AlpmList<T>{
         AlpmList {
             list: std::ptr::null_mut(),
             current: std::ptr::null_mut(),
@@ -56,17 +56,17 @@ impl<T: AlpmListItem<T>> List<T> for AlpmList<T> {
         }
     }
 
-    fn add(&mut self, item : T) {
+    pub fn add(&mut self, item : T) {
         unsafe{
             self.list = alpm_list_add(self.list, item.to_ptr());
         }
     }
     
-    fn to_ptr(&self) -> *mut alpm_list_t {
+    pub fn to_ptr(&self) -> *mut alpm_list_t {
         self.list
     }
 
-    fn iter (&self) -> AlpmListIterator<T> {
+    pub fn iter (&self) -> AlpmListIterator<T> {
         AlpmListIterator {
             item: self.list,
             phantom: PhantomData,

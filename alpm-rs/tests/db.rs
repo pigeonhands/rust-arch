@@ -1,4 +1,3 @@
-use alpm_rs::List;
 
 #[test]
 fn sync_dbs(){

@@ -1,5 +1,4 @@
 use alpm_rs;
-use alpm_rs::List;
 
 #[test]
 fn pkg_cache() {
