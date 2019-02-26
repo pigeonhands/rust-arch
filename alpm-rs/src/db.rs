@@ -110,7 +110,8 @@ impl AlpmDB{
         }
     }
 
-    pub fn update(&self, force: bool) -> bool{
+    /// Requires root
+    pub fn update(&self, force: bool) -> i32{
         let force_i = if force {
             1
         }else{
@@ -118,7 +119,7 @@ impl AlpmDB{
         };
 
         unsafe{
-            to_bool!(alpm_db_update(force_i, self.db))
+            alpm_db_update(force_i, self.db)
         }
     } 
 
