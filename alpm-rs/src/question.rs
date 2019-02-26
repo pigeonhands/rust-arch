@@ -3,7 +3,7 @@
 use std::os::raw::{c_char, c_void};
 
 use crate::package::{alpm_pkg_t,Package, PackageList};
-use crate::db::{alpm_db_t, AlpmDB};
+use crate::db::{alpm_db_t};
 use crate::enums;
 use crate::list::alpm_list_t;
 

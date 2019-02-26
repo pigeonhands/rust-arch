@@ -161,6 +161,22 @@ pub struct StringList {
     alpm_list: AlpmList<StringItem>,
 }
 
+impl From<&[&str]> for StringList{
+    fn from(strs: &[&str]) -> Self {
+        let mut list = StringList::empty();
+        for s in strs{
+            list.add(s.into());
+        }
+        list
+    }
+}
+
+impl From<*mut alpm_list_t> for StringList {
+    fn from(lst: *mut alpm_list_t) -> Self{
+        StringList::new(lst)
+    }
+}
+
 impl crate::list::List<StringItem> for StringList {
     fn empty() -> Self {
         StringList{
