@@ -9,6 +9,7 @@ pub mod package;
 pub mod list;
 pub mod callbacks;
 pub mod question;
+pub mod dependency;
 
 pub use crate::list::{List, AlpmListItem};
 

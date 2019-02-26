@@ -6,6 +6,7 @@ use crate::package::{alpm_pkg_t,Package, PackageList};
 use crate::db::{alpm_db_t};
 use crate::enums;
 use crate::list::alpm_list_t;
+use crate::dependency::{alpm_depend_t, Depend, alpm_conflict_t, Conflict};
 
 #[allow(non_camel_case_types)]
 type alpm_time_t = i64;
@@ -23,26 +24,6 @@ struct alpm_pgpkey_t{
     length: u32,
     revoked: u32,
     pubkey_algo: u8,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-struct alpm_depend_t{
-    name: *const c_char,
-    version: *const c_char,
-    desc: *const c_char,
-    name_hash: u64,
-    dep_mod: enums::alpm_depmod,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-struct alpm_conflict_t{
-    package1_hash: u64,
-    package2_hash: u64,
-    package1: *const c_char,
-    package2: *const c_char,
-    reason: *mut alpm_depend_t,
 }
 
 #[repr(C)]
@@ -127,27 +108,6 @@ pub union alpm_question_t {
 
 
 
-pub struct Depend {
-    pub name: String,
-    pub version: String,
-    pub desc: String,
-    pub name_hash: u64,
-    pub dep_mod: enums::alpm_depmod,
-}
-
-
-impl From<*mut alpm_depend_t> for Depend{
-    fn from(dpnd: *mut alpm_depend_t) -> Self{
-        let d = unsafe { *dpnd };
-        Depend{
-            name: cstring!(d.name),
-            version: cstring!(d.name),
-            desc: cstring!(d.name),
-            name_hash: d.name_hash,
-            dep_mod: d.dep_mod,
-        }
-    }
-}
 
 
 pub struct PgpKey{
@@ -180,28 +140,6 @@ impl From<*mut alpm_pgpkey_t> for PgpKey{
         }
     }
 }
-
-pub struct Conflict {
-    pub package1_hash: u64,
-    pub package2_hash: u64,
-    pub package1: String,
-    pub package2: String,
-    pub reason: Depend,
-}
-
-impl From<*mut alpm_conflict_t> for Conflict{
-    fn from(cflt: *mut alpm_conflict_t) -> Self{
-        let d= unsafe { *cflt };
-        Conflict{
-            package1_hash: d.package1_hash,
-            package2_hash: d.package2_hash,
-            package1: cstring!(d.package1),
-            package2: cstring!(d.package2),
-            reason: d.reason.into(),
-        }
-    }
-}
-
 
 pub struct QuestionAny{
     pub question_type: i32,
