@@ -25,26 +25,28 @@ static mut QUESTION_CALLBACK : Option<QuestionCallback> = None;
 */
 
 
-type LogCallback = fn(i32,String);
-type DownloadCallback = fn(filename: &str, downloaded: i64, total: i64);
-type QuestionCallback = fn(question: QuestionArgs);
 
 
-static mut LOG_CALLBACK : Option<LogCallback> = None;
-static mut DOWNLOAD_CALLBACK : Option<DownloadCallback> = None;
-static mut QUESTION_CALLBACK : Option<QuestionCallback> = None;
+type LogCallback = Fn(i32,String);
+type DownloadCallback = Fn(&str,i64,i64);
+type QuestionCallback = Fn(QuestionArgs);
+
+
+static mut LOG_CALLBACK : Option<Box<LogCallback>> = None;
+static mut DOWNLOAD_CALLBACK : Option<Box<DownloadCallback>> = None;
+static mut QUESTION_CALLBACK : Option<Box<QuestionCallback>> = None;
 
 
 extern "C" fn alpm_log_cb_handler(level: i32, fmt: *mut c_char, args: clib::VaList){
         unsafe{
-            if let Some(f) = LOG_CALLBACK{
+            if let Some(f) = &LOG_CALLBACK{
             let out = clib::vsn_printf(fmt, args);
             f(level, out);
         }
     }
 }
 
-pub fn set_log_callback(h: &Handle, cb: LogCallback){
+pub fn set_log_callback<T: Fn(i32,String)+ 'static>(h: &Handle, cb: T){
     unsafe{
         match LOG_CALLBACK{
             None => {
@@ -52,19 +54,19 @@ pub fn set_log_callback(h: &Handle, cb: LogCallback){
             },
             _ => {},
         }
-        LOG_CALLBACK = Some(cb);
+        LOG_CALLBACK = Some(Box::new(cb));
     }
 }
 
 extern "C" fn alpm_log_download_handler(filename: *mut c_char, xfered: i64, total: i64){
     unsafe{
-        if let Some(f) = DOWNLOAD_CALLBACK{
+        if let Some(f) = &DOWNLOAD_CALLBACK{
             f(cstr!(filename), xfered, total);
         }
     }
 }
 
-pub fn set_download_callback(h: &Handle, cb: DownloadCallback){
+pub fn set_download_callback<T: Fn(&str,i64,i64)+ 'static>(h: &Handle, cb: T){
     unsafe{
         match DOWNLOAD_CALLBACK{
             None => {
@@ -72,19 +74,19 @@ pub fn set_download_callback(h: &Handle, cb: DownloadCallback){
             },
             _ => {},
         }
-        DOWNLOAD_CALLBACK = Some(cb);
+        DOWNLOAD_CALLBACK = Some(Box::new(cb));
     }
 }
 
 extern "C" fn alpm_question_handler(q_raw: *mut alpm_question_t){
     unsafe{
-        if let Some(f) = QUESTION_CALLBACK{
+        if let Some(f) = &QUESTION_CALLBACK{
             f(q_raw.into());
         }
     }
 }
 
-pub fn set_question_callback(h: &Handle, cb: QuestionCallback){
+pub fn set_question_callback<T: Fn(QuestionArgs)+ 'static>(h: &Handle, cb: T){
     unsafe{
         match QUESTION_CALLBACK{
             None => {
@@ -92,6 +94,6 @@ pub fn set_question_callback(h: &Handle, cb: QuestionCallback){
             },
             _ => {},
         }
-        QUESTION_CALLBACK = Some(cb);
+        QUESTION_CALLBACK = Some(Box::new(cb));
     }
 }
