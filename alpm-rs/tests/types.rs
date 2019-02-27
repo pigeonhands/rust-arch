@@ -1,4 +1,4 @@
-use alpm_rs::list::{StringList, List, AlpmListItem};
+use alpm_rs::list::{StringList, AlpmListItem};
 use std::os::raw::c_char;
 
 

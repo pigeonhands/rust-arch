@@ -15,15 +15,6 @@ pub struct alpm_list_t  {
 	pub (crate) prev: *mut alpm_list_t,
 	pub (crate) next: *mut alpm_list_t,
 }
-
-pub trait List<T: AlpmListItem<T>> {
-    fn new(c_list: *mut alpm_list_t) -> Self;
-    fn empty() -> Self;
-    fn add(&mut self, item : T);
-    fn to_ptr(&self) -> *mut alpm_list_t;
-    fn iter (&self) -> AlpmListIterator<T>;
-}
-
 /// Trait to pass each item into a custom struct's constructor.
 /// Workaround to avoid copying data and loosing the alpm_list_t data pointer 
 pub trait AlpmListItem<T>{
@@ -157,6 +148,7 @@ impl<'a,T: AsRef<str> + 'a> From<T> for StringItem{
     }
 }
 
+
 pub struct StringList {
     alpm_list: AlpmList<StringItem>,
 }
@@ -177,31 +169,32 @@ impl From<*mut alpm_list_t> for StringList {
     }
 }
 
-impl crate::list::List<StringItem> for StringList {
-    fn empty() -> Self {
+impl StringList {
+    pub fn empty() -> Self {
         StringList{
             alpm_list: AlpmList::empty(),
         }
     }
 
-    fn new(list: *mut alpm_list_t) -> Self {
+    pub fn new(list: *mut alpm_list_t) -> Self {
         StringList{
             alpm_list: AlpmList::new(list),
         }
     }
 
-    fn add(&mut self, item: StringItem){
+    pub fn add(&mut self, item: StringItem){
         self.alpm_list.add(item);
     }
 
-    fn to_ptr(&self) -> *mut alpm_list_t {
+    pub fn to_ptr(&self) -> *mut alpm_list_t {
         self.alpm_list.to_ptr()
     }
 
-    fn iter(&self) -> AlpmListIterator<StringItem> {
+    pub fn iter(&self) -> AlpmListIterator<StringItem> {
         self.alpm_list.iter()
     }
 }
+
 
 impl Drop for StringList{
     fn drop(&mut self){
@@ -210,5 +203,29 @@ impl Drop for StringList{
                 let _ = str_fromraw!(s.string_ptr);
             }
         }
+    }
+}
+
+pub struct AnyListItem{
+    raw_ptr: *mut c_void,
+}
+
+impl AlpmListItem<AnyListItem> for AnyListItem {
+    fn new(ptr: *mut c_void) -> Self{
+        AnyListItem{
+            raw_ptr: ptr,
+        }
+    }
+
+    fn to_ptr(&self) -> *mut c_void {
+        self.raw_ptr
+    }
+}
+
+pub type AnyList = AlpmList<AnyListItem>;
+
+impl AnyList {
+    pub fn into_list<T: From<*mut alpm_list_t>>(&self) -> T{
+        self.to_ptr().into()
     }
 }

@@ -3,7 +3,7 @@ extern crate libc;
 use std::os::raw::{c_char,c_void};
 
 use crate::package::{PackageList,alpm_pkg_t,Package};
-use crate::list::{alpm_list_t, List, AlpmList, AlpmListItem, StringList };
+use crate::list::{alpm_list_t, AlpmList, AlpmListItem, StringList };
 
 //alpm_list_t *alpm_db_get_servers(const alpm_db_t *db);
 //int alpm_db_set_servers(alpm_db_t *db, alpm_list_t *servers);

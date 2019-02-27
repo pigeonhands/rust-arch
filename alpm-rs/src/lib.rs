@@ -11,7 +11,7 @@ pub mod callbacks;
 pub mod question;
 pub mod dependency;
 
-pub use crate::list::{List, AlpmListItem};
+pub use crate::list::{AlpmListItem};
 
 
 extern crate libc;
@@ -20,7 +20,8 @@ use std::error::Error;
 use std::os::raw::c_char;
 
 use crate::package::{Package,alpm_pkg_t};
-use crate::list::{alpm_list_t};
+use crate::dependency::DepMissingList;
+use crate::list::{alpm_list_t, AlpmList, AnyList};
 use crate::db::{AlpmDB,alpm_db_t, DBList};
 use crate::enums::ErrorNo;
 
@@ -42,8 +43,10 @@ extern {
 
     fn alpm_trans_init(handle: *mut alpm_handle_t, flags: i32) -> i32;
     fn alpm_trans_get_add(handle: *mut alpm_handle_t) -> *mut alpm_list_t;
-    //fn alpm_trans_commit(handle: *mut alpm_handle_t, list: *mut alpm_list_t) -> i32;
+    fn alpm_trans_commit(handle: *mut alpm_handle_t, list: *mut *mut alpm_list_t) -> i32;
     fn alpm_trans_release(handle: *mut alpm_handle_t) -> i32;
+    fn alpm_trans_prepare(handle: *mut alpm_handle_t, data: *mut *mut alpm_list_t) -> i32;
+
 
 
 
@@ -222,6 +225,30 @@ impl Handle{
     pub fn trans_release(&self) -> bool {
         unsafe{
             to_bool!(alpm_trans_release(self.alpm_handle))
+        }
+    }
+
+    pub fn trans_prepare(&self, deps: *mut DepMissingList) -> bool {
+        unsafe {
+            let mut list = AlpmList::empty();
+            if alpm_trans_prepare(self.alpm_handle,  &mut list.list as *mut *mut alpm_list_t) < 0{
+                false
+            }else{
+                *deps = list;
+                true
+            }
+        }
+    }
+
+    pub fn trans_commit(&self, list: *mut AnyList) -> bool {
+        unsafe{
+            let mut t_list = AlpmList::empty();
+            if alpm_trans_commit(self.alpm_handle, &mut t_list.list as *mut *mut alpm_list_t) < 0{
+                false
+            }else{
+                *list = t_list;
+                true
+            }
         }
     }
 

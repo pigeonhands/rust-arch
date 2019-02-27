@@ -12,7 +12,7 @@ extern {
 
 pub type DepMissingList = AlpmList<DepMissing>;
 
-impl AlpmListItem<*mut alpm_depmissing_t> for DepMissing{
+impl AlpmListItem<DepMissing> for DepMissing{
     fn new(ptr: *mut c_void) -> Self {
         (ptr as *mut alpm_depmissing_t).into()
     }
