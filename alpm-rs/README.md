@@ -1,24 +1,20 @@
 # alpm-rs
 alpm bindings for rust.
 
-## usage
-
-
-    [dependencies]
-    alpm_rc = "*"
-
+[![alpm-rs](https://img.shields.io/crates/v/alpm-rs.svg?label=crates.io)](https://crates.io/crates/alpm-rs)
 
 Usage:
 
-    let handle = alpm_rs::initialize("/", "/var/lib/pacman").unwrap();
-        let db = handle.local_db();
-        let packages = db.pkgcache();
-    }
+[kia is made with this crate](https://github.com/BahNahNah/kea)
 
-    for p in packages {
-        println!("{} {}", p.name(), p.version());
-    }
+```
+let handle = alpm_rs::initialize("/", "/var/lib/pacman").unwrap();
+let db = handle.local_db();
+let packages = db.pkgcache();
 
+for p in packages {
+    println!("{} {}", p.name(), p.version());
+}
+```
 
-references:
-`https://github.com/devkitPro/pacman/blob/master/lib/libalpm/alpm.h`
+[alpm.h reference](https://github.com/devkitPro/pacman/blob/master/lib/libalpm/alpm.h)
