@@ -1,19 +1,17 @@
-
-
 use std::os::raw::{c_char, c_void};
 
-use crate::package::{alpm_pkg_t,Package, PackageList};
-use crate::db::{alpm_db_t};
+use crate::db::alpm_db_t;
+use crate::dependency::{alpm_conflict_t, alpm_depend_t, Conflict, Depend};
 use crate::enums;
 use crate::list::alpm_list_t;
-use crate::dependency::{alpm_depend_t, Depend, alpm_conflict_t, Conflict};
+use crate::package::{alpm_pkg_t, Package, PackageList};
 
 #[allow(non_camel_case_types)]
 type alpm_time_t = i64;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-struct alpm_pgpkey_t{
+struct alpm_pgpkey_t {
     data: *mut c_void,
     fingerprint: *const c_char,
     uid: *const c_char,
@@ -28,14 +26,14 @@ struct alpm_pgpkey_t{
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-struct alpm_question_any_t{
+struct alpm_question_any_t {
     question_type: i32,
     answer: i32,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-struct alpm_question_install_ignorepkg_t{
+struct alpm_question_install_ignorepkg_t {
     question_type: i32,
     answer: i32,
     pkg: *mut alpm_pkg_t,
@@ -43,7 +41,7 @@ struct alpm_question_install_ignorepkg_t{
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-struct alpm_question_replace_t{
+struct alpm_question_replace_t {
     question_type: i32,
     answer: i32,
     oldpkg: *mut alpm_pkg_t,
@@ -53,7 +51,7 @@ struct alpm_question_replace_t{
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-struct alpm_question_conflict_t{
+struct alpm_question_conflict_t {
     question_type: i32,
     answer: i32,
     conflict: *mut alpm_conflict_t,
@@ -61,7 +59,7 @@ struct alpm_question_conflict_t{
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-struct alpm_question_corrupted_t{
+struct alpm_question_corrupted_t {
     question_type: i32,
     answer: i32,
     filepath: *const c_char,
@@ -70,7 +68,7 @@ struct alpm_question_corrupted_t{
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-struct alpm_question_remove_pkgs_t{
+struct alpm_question_remove_pkgs_t {
     question_type: i32,
     answer: i32,
     packages: *mut alpm_list_t,
@@ -78,7 +76,7 @@ struct alpm_question_remove_pkgs_t{
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-struct alpm_question_select_provider_t{
+struct alpm_question_select_provider_t {
     question_type: i32,
     answer: i32,
     providers: *mut alpm_list_t, //List of alpm_pkg_t
@@ -87,7 +85,7 @@ struct alpm_question_select_provider_t{
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-struct alpm_question_import_key_t{
+struct alpm_question_import_key_t {
     question_type: i32,
     answer: i32,
     key: *mut alpm_pgpkey_t,
@@ -100,17 +98,13 @@ pub union alpm_question_t {
     install_ignorepkg: alpm_question_install_ignorepkg_t,
     replace: alpm_question_replace_t,
     conflict: alpm_question_conflict_t,
-    corrupted:  alpm_question_corrupted_t,
+    corrupted: alpm_question_corrupted_t,
     remove_pkgs: alpm_question_remove_pkgs_t,
     select_provider: alpm_question_select_provider_t,
     import_key: alpm_question_import_key_t,
 }
 
-
-
-
-
-pub struct PgpKey{
+pub struct PgpKey {
     pub data: *mut c_void,
     pub fingerprint: String,
     pub uid: String,
@@ -123,10 +117,10 @@ pub struct PgpKey{
     pub pubkey_algo: u8,
 }
 
-impl From<*mut alpm_pgpkey_t> for PgpKey{
-    fn from(pgpk: *mut alpm_pgpkey_t) -> Self{
+impl From<*mut alpm_pgpkey_t> for PgpKey {
+    fn from(pgpk: *mut alpm_pgpkey_t) -> Self {
         let k = unsafe { *pgpk };
-        PgpKey{
+        PgpKey {
             data: k.data,
             fingerprint: cstring!(k.fingerprint),
             uid: cstring!(k.uid),
@@ -141,32 +135,31 @@ impl From<*mut alpm_pgpkey_t> for PgpKey{
     }
 }
 
-pub struct QuestionAny{
+pub struct QuestionAny {
     pub question_type: i32,
     pub answer: i32,
 }
 
-impl From<*mut alpm_question_t> for QuestionAny{
-    fn from(q_raw: *mut alpm_question_t) -> Self{
-        let q = unsafe{ *(q_raw as *mut alpm_question_any_t) };
-        QuestionAny{
+impl From<*mut alpm_question_t> for QuestionAny {
+    fn from(q_raw: *mut alpm_question_t) -> Self {
+        let q = unsafe { *(q_raw as *mut alpm_question_any_t) };
+        QuestionAny {
             question_type: q.question_type,
             answer: q.answer,
         }
     }
 }
 
-pub struct QuestionInstallIgnorePkg{
+pub struct QuestionInstallIgnorePkg {
     pub question_type: i32,
     pub answer: i32,
     pub pkg: Package,
 }
 
-
-impl From<*mut alpm_question_t> for QuestionInstallIgnorePkg{
-    fn from(q_raw: *mut alpm_question_t) -> Self{
-        let q = unsafe{ *(q_raw as *mut alpm_question_install_ignorepkg_t) };
-        QuestionInstallIgnorePkg{
+impl From<*mut alpm_question_t> for QuestionInstallIgnorePkg {
+    fn from(q_raw: *mut alpm_question_t) -> Self {
+        let q = unsafe { *(q_raw as *mut alpm_question_install_ignorepkg_t) };
+        QuestionInstallIgnorePkg {
             question_type: q.question_type,
             answer: q.answer,
             pkg: q.pkg.into(),
@@ -174,17 +167,16 @@ impl From<*mut alpm_question_t> for QuestionInstallIgnorePkg{
     }
 }
 
-pub struct QuestionReplacePkg{
+pub struct QuestionReplacePkg {
     pub question_type: i32,
     pub answer: i32,
     pub conflict: Conflict,
 }
 
-
-impl From<*mut alpm_question_t> for QuestionReplacePkg{
-    fn from(q_raw: *mut alpm_question_t) -> Self{
-        let q = unsafe{ *(q_raw as *mut alpm_question_conflict_t) };
-        QuestionReplacePkg{
+impl From<*mut alpm_question_t> for QuestionReplacePkg {
+    fn from(q_raw: *mut alpm_question_t) -> Self {
+        let q = unsafe { *(q_raw as *mut alpm_question_conflict_t) };
+        QuestionReplacePkg {
             question_type: q.question_type,
             answer: q.answer,
             conflict: q.conflict.into(),
@@ -192,18 +184,16 @@ impl From<*mut alpm_question_t> for QuestionReplacePkg{
     }
 }
 
-
-pub struct QuestionConflict{
+pub struct QuestionConflict {
     pub question_type: i32,
     pub answer: i32,
     pub conflict: Conflict,
 }
 
-
-impl From<*mut alpm_question_t> for QuestionConflict{
-    fn from(q_raw: *mut alpm_question_t) -> Self{
-        let q = unsafe{ *(q_raw as *mut alpm_question_conflict_t) };
-        QuestionConflict{
+impl From<*mut alpm_question_t> for QuestionConflict {
+    fn from(q_raw: *mut alpm_question_t) -> Self {
+        let q = unsafe { *(q_raw as *mut alpm_question_conflict_t) };
+        QuestionConflict {
             question_type: q.question_type,
             answer: q.answer,
             conflict: q.conflict.into(),
@@ -211,17 +201,17 @@ impl From<*mut alpm_question_t> for QuestionConflict{
     }
 }
 
-pub struct QuestionCorrupted{
+pub struct QuestionCorrupted {
     pub question_type: i32,
     pub answer: i32,
     pub filepath: String,
     pub reason: enums::ErrorNo,
 }
 
-impl From<*mut alpm_question_t> for QuestionCorrupted{
-    fn from(q_raw: *mut alpm_question_t) -> Self{
-        let q = unsafe{ *(q_raw as *mut alpm_question_corrupted_t) };
-        QuestionCorrupted{
+impl From<*mut alpm_question_t> for QuestionCorrupted {
+    fn from(q_raw: *mut alpm_question_t) -> Self {
+        let q = unsafe { *(q_raw as *mut alpm_question_corrupted_t) };
+        QuestionCorrupted {
             question_type: q.question_type,
             answer: q.answer,
             filepath: cstring!(q.filepath),
@@ -230,17 +220,16 @@ impl From<*mut alpm_question_t> for QuestionCorrupted{
     }
 }
 
-
-pub struct QuestionRemovePackages{
+pub struct QuestionRemovePackages {
     pub question_type: i32,
     pub answer: i32,
     pub packages: PackageList,
 }
 
-impl From<*mut alpm_question_t> for QuestionRemovePackages{
-    fn from(q_raw: *mut alpm_question_t) -> Self{
-        let q = unsafe{ *(q_raw as *mut alpm_question_remove_pkgs_t) };
-        QuestionRemovePackages{
+impl From<*mut alpm_question_t> for QuestionRemovePackages {
+    fn from(q_raw: *mut alpm_question_t) -> Self {
+        let q = unsafe { *(q_raw as *mut alpm_question_remove_pkgs_t) };
+        QuestionRemovePackages {
             question_type: q.question_type,
             answer: q.answer,
             packages: q.packages.into(),
@@ -248,17 +237,17 @@ impl From<*mut alpm_question_t> for QuestionRemovePackages{
     }
 }
 
-pub struct QuestionSelectProvider{
+pub struct QuestionSelectProvider {
     pub question_type: i32,
     pub answer: i32,
     pub providers: PackageList,
     pub dependant: Depend,
 }
 
-impl From<*mut alpm_question_t> for QuestionSelectProvider{
-    fn from(q_raw: *mut alpm_question_t) -> Self{
-        let q = unsafe{ *(q_raw as *mut alpm_question_select_provider_t) };
-        QuestionSelectProvider{
+impl From<*mut alpm_question_t> for QuestionSelectProvider {
+    fn from(q_raw: *mut alpm_question_t) -> Self {
+        let q = unsafe { *(q_raw as *mut alpm_question_select_provider_t) };
+        QuestionSelectProvider {
             question_type: q.question_type,
             answer: q.answer,
             providers: q.providers.into(),
@@ -267,24 +256,22 @@ impl From<*mut alpm_question_t> for QuestionSelectProvider{
     }
 }
 
-pub struct QuestionImportKey{
+pub struct QuestionImportKey {
     pub question_type: i32,
     pub answer: i32,
     pub key: PgpKey,
 }
 
-impl From<*mut alpm_question_t> for QuestionImportKey{
-    fn from(q_raw: *mut alpm_question_t) -> Self{
-        let q = unsafe{ *(q_raw as *mut alpm_question_import_key_t) };
-        QuestionImportKey{
+impl From<*mut alpm_question_t> for QuestionImportKey {
+    fn from(q_raw: *mut alpm_question_t) -> Self {
+        let q = unsafe { *(q_raw as *mut alpm_question_import_key_t) };
+        QuestionImportKey {
             question_type: q.question_type,
             answer: q.answer,
             key: q.key.into(),
         }
     }
 }
-
-
 
 pub enum Question {
     Any(QuestionAny),
@@ -302,18 +289,15 @@ pub struct QuestionArgs {
     pub question: Question,
 }
 
-
 impl QuestionArgs {
-    pub fn set_answer(&self, ans: i32){
-        unsafe{
+    pub fn set_answer(&self, ans: i32) {
+        unsafe {
             (*self.question_raw).answer = ans;
         }
     }
 
     pub fn answer(&self) -> i32 {
-        unsafe{
-            (*self.question_raw).answer
-        }
+        unsafe { (*self.question_raw).answer }
     }
 
     pub fn to_any(&self) -> QuestionAny {
@@ -321,11 +305,11 @@ impl QuestionArgs {
     }
 }
 
-impl From<*mut alpm_question_t> for QuestionArgs{
-    fn from(q: *mut alpm_question_t) -> Self{
-        QuestionArgs{
+impl From<*mut alpm_question_t> for QuestionArgs {
+    fn from(q: *mut alpm_question_t) -> Self {
+        QuestionArgs {
             question_raw: q as *mut alpm_question_any_t,
-            question: unsafe{
+            question: unsafe {
                 match (*q).question_type {
                     enums::ALPM_QUESTION_INSTALL_IGNOREPKG => Question::InstallIgnorePkg(q.into()),
                     enums::ALPM_QUESTION_REPLACE_PKG => Question::Replace(q.into()),
@@ -336,8 +320,7 @@ impl From<*mut alpm_question_t> for QuestionArgs{
                     enums::ALPM_QUESTION_IMPORT_KEY => Question::ImportKey(q.into()),
                     _ => Question::Any(q.into()),
                 }
-            }
+            },
         }
-        
     }
 }
